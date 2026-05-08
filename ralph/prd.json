@@ -1,0 +1,293 @@
+{
+  "project": "二胡识谱 - Erhu Score Trainer",
+  "branchName": "ralph/erhu-app-remaining",
+  "description": "Remaining work for 二胡识谱 iOS app: complete the practice loop, enhance audio engine, add content and polish. Phase 1 = MVP (stories 1-5), Phase 2 = enhanced features (6-15), Phase 3 = platform polish (16-17). Core functionality (Phase 1) is the primary goal; exit after Phase 1 if desired.",
+  "userStories": [
+    {
+      "id": "US-001",
+      "title": "Xcode project configuration for iOS build",
+      "description": "As a developer, I need a proper Xcode project setup so the app can be built and run on iOS 18+ Simulator.",
+      "acceptanceCriteria": [
+        "Generate .xcodeproj from Package.swift, or configure Package.swift so 'xcodebuild -scheme ErhuApp -destination platform=iOS Simulator' succeeds",
+        "All 15 Swift source files compile without errors targeting iOS 18+",
+        "Info.plist is correctly bundled: display name '二胡识谱', microphone usage description in Chinese",
+        "App launches on iPhone Simulator (iOS 18+)",
+        "Microphone permission prompt appears on first launch of practice view",
+        "Typecheck passes"
+      ],
+      "priority": 1,
+      "passes": false,
+      "notes": "Use 'swift package generate-xcodeproj' or create minimal xcodeproj. iOS Simulator runtime must be installed in Xcode."
+    },
+    {
+      "id": "US-002",
+      "title": "YIN pitch detection algorithm for erhu",
+      "description": "As a user, I want accurate pitch detection optimized for erhu's timbre (portamento, vibrato) so the app correctly recognizes notes I play.",
+      "acceptanceCriteria": [
+        "Replace autocorrelation in Sources/ErhuApp/Audio/AudioEngine.swift with YIN algorithm",
+        "YIN threshold parameter defaults to 0.15, configurable",
+        "Detect fundamental frequency range C3-C7 (65Hz-2093Hz)",
+        "Note detection latency under 100ms for sustained notes",
+        "Accurate within ±20 cents for sustained notes",
+        "Handle erhu portamento (滑音) gracefully: no false triggers during pitch slides, only register when pitch stabilizes within 50 cents for >80ms",
+        "Typecheck passes"
+      ],
+      "priority": 2,
+      "passes": false,
+      "notes": "Implement YIN in pure Swift with Accelerate for performance. See de Cheveigné & Kawahara (2002) for algorithm reference."
+    },
+    {
+      "id": "US-003",
+      "title": "Real-time score follower",
+      "description": "As a user, I want the score display to highlight the current note as I play so I can follow along without losing my place.",
+      "acceptanceCriteria": [
+        "Current note highlights in real time (yellow background) when user plays the correct pitch",
+        "Score follower advances one note when user plays within ±50 cents of target for >100ms",
+        "Follower pauses advancing when amplitude drops below threshold (>500ms of silence)",
+        "Follower automatically skips rest notes (degree==0) without requiring input",
+        "Visual indicator shows follower state: green dot = listening, yellow dot = waiting for input, gray dot = idle",
+        "When user reaches end of score, show performance summary automatically",
+        "Typecheck passes"
+      ],
+      "priority": 3,
+      "passes": false,
+      "notes": "Update PracticeView.swift. The follower runs in a Task with periodic checks. Add state enum for follower status."
+    },
+    {
+      "id": "US-004",
+      "title": "Real-time audio visual feedback",
+      "description": "As a user, I want immediate visual feedback on pitch accuracy so I can correct my intonation while playing.",
+      "acceptanceCriteria": [
+        "Each note cell shows judgment color: green background = correct (±50¢), red = wrong note, orange = correct note but out of tune (>50¢ off)",
+        "Arrow indicators: ↑ red arrow when sharp (>50¢), ↓ blue arrow when flat (<-50¢)",
+        "Cents deviation label below note: '+23¢' or '-15¢' in small text",
+        "Current frequency displayed in Hz: '440.0 Hz'",
+        "All feedback updates in real time (<200ms from note detection)",
+        "Smooth color transitions (0.3s animation) to avoid jarring changes",
+        "Typecheck passes"
+      ],
+      "priority": 4,
+      "passes": false,
+      "notes": "Update ScoreView.swift NoteCell and PracticeView.swift. Reuse PitchJudger.Judgment struct."
+    },
+    {
+      "id": "US-005",
+      "title": "Performance summary after practice",
+      "description": "As a user, I want to see a summary of my practice session after finishing so I can track my progress.",
+      "acceptanceCriteria": [
+        "Summary screen appears automatically when score follower reaches end of score or user taps '结束'",
+        "Shows: total notes played, correct count, accuracy percentage, duration",
+        "Breakdown by note degree (do/re/mi/fa/sol/la/si) showing accuracy per degree",
+        "Accuracy for most recent attempt preserved until next practice",
+        "Buttons: '再练一次' (retry same score) and '选择其他曲目' (go to score library)",
+        "Typecheck passes"
+      ],
+      "priority": 5,
+      "passes": false,
+      "notes": "New view: PerformanceSummaryView.swift. Take PitchJudger.PerformanceResult as input."
+    },
+    {
+      "id": "US-006",
+      "title": "Jianpu text parser",
+      "description": "As a user, I want to import scores from plain text jianpu notation so I can practice custom pieces.",
+      "acceptanceCriteria": [
+        "New service JianpuParser parses text like '1 2 3 5 6 5 3 2 1 | 5 6 5 3 2 | 1 -' into Score model",
+        "Numbers 1-7 = scale degrees, 0 = rest, spaces=note separator, | = bar line",
+        "Dots after number raise octave (1. = high do), dots before lower (1 = low do)",
+        "Dash after number = half duration (5- = two beats), underscore = double duration (5_ = four beats)",
+        "Produces valid Score object with correctly partitioned measures",
+        "Shows parse errors with line/position on invalid input",
+        "Typecheck passes"
+      ],
+      "priority": 6,
+      "passes": false,
+      "notes": "New file: Sources/ErhuApp/Services/JianpuParser.swift. Pure logic, no UI."
+    },
+    {
+      "id": "US-007",
+      "title": "Score editor and importer UI",
+      "description": "As a user, I want to create and edit scores directly in the app using jianpu text.",
+      "acceptanceCriteria": [
+        "New '自定义曲谱' section in ScoreLibraryView with '新建' button",
+        "Text editor view with jianpu input field and live preview of parsed score",
+        "'保存' button saves custom score to ScoreService (in-memory array, survives session)",
+        "Custom scores show a badge '自定义' in the library list",
+        "Edit existing custom scores by tapping pencil icon, delete by swiping",
+        "Empty state: '还没有自定义曲谱，点击新建开始'",
+        "Typecheck passes"
+      ],
+      "priority": 7,
+      "passes": false,
+      "notes": "New view: ScoreEditorView.swift. Update ScoreLibraryView to show custom vs built-in scores."
+    },
+    {
+      "id": "US-008",
+      "title": "A/B section loop practice",
+      "description": "As a user, I want to loop a specific section of a score so I can drill difficult passages.",
+      "acceptanceCriteria": [
+        "Long-press on a note sets loop point A (start), long-press another sets loop point B (end)",
+        "Loop region highlighted with orange background on the score",
+        "When playback reaches B, it jumps back to A automatically",
+        "Loop count stepper: '循环 3 次' (default infinite until user stops)",
+        "'取消循环' button clears loop markers",
+        "Loop markers persist across practice sessions on the same score",
+        "Typecheck passes"
+      ],
+      "priority": 8,
+      "passes": false,
+      "notes": "Update PracticeView.swift and ScoreView.swift. Add loopStartIndex and loopEndIndex state."
+    },
+    {
+      "id": "US-009",
+      "title": "Tempo control and metronome",
+      "description": "As a user, I want to control practice tempo and hear a metronome beat.",
+      "acceptanceCriteria": [
+        "Tempo slider (40-200 BPM) in practice view, adjustable before and during practice",
+        "Metronome toggle button: ON = tick sound at current tempo",
+        "Metronome click on every beat (4 clicks per measure in 4/4)",
+        "Visual flash (circle pulse) on beat 1 (downbeat)",
+        "Beat indicator lights: 4 dots that light up sequentially per measure",
+        "Tempo value shown as: '♩ = 80'",
+        "Typecheck passes"
+      ],
+      "priority": 9,
+      "passes": false,
+      "notes": "Metronome audio can use AVAudioPlayer with short tick sound file or generate via AVFoundation."
+    },
+    {
+      "id": "US-010",
+      "title": "Practice session recording",
+      "description": "As a user, I want to record my practice session audio so I can review my playing later.",
+      "acceptanceCriteria": [
+        "Record button in practice view: red circle, pulses when recording",
+        "Audio recorded to app's Documents directory as AAC/m4a files",
+        "Recording metadata (date, score title, duration) saved alongside audio file",
+        "Recording list accessible from practice view's toolbar",
+        "Recording stops automatically when practice ends, or manually with stop button",
+        "Typecheck passes"
+      ],
+      "priority": 10,
+      "passes": false,
+      "notes": "Use AVAudioRecorder. Metadata in JSON or Core Data. Store in Documents/Recordings/."
+    },
+    {
+      "id": "US-011",
+      "title": "Playback comparison with synchronized score",
+      "description": "As a user, I want to play back my recording with the score synchronized so I can see where I made mistakes.",
+      "acceptanceCriteria": [
+        "Recording list shows: date, score title, duration, accuracy",
+        "Tap recording to play back: audio plays + score highlights notes in sync with original judgments",
+        "Playback speed control: 0.5x, 1x, 1.5x",
+        "Seek bar to jump to any point in recording",
+        "Swipe to delete recording with confirmation alert",
+        "Empty state: '还没有录音记录'",
+        "Typecheck passes"
+      ],
+      "priority": 11,
+      "passes": false,
+      "notes": "Need to store note-by-note judgment timestamps during original practice for sync."
+    },
+    {
+      "id": "US-012",
+      "title": "Core Data persistence for practice records",
+      "description": "As a developer, I want practice records persisted so users can track their progress across sessions.",
+      "acceptanceCriteria": [
+        "Core Data model: PracticeRecord entity (date, scoreTitle, accuracy, duration, totalNotes, correctNotes)",
+        "NoteDetail entity (parent PracticeRecord, noteIndex, degree, wasCorrect, centsOff, timestamp)",
+        "Save practice results to Core Data automatically when performance summary is shown",
+        "Load practice history on app launch for charts and statistics",
+        "Migrate ScoreService from in-memory array to Core Data (optional: keep built-in scores in-memory)",
+        "Typecheck passes"
+      ],
+      "priority": 12,
+      "passes": false,
+      "notes": "Create Core Data stack in new file PersistenceController.swift. Use NSPersistentContainer."
+    },
+    {
+      "id": "US-013",
+      "title": "Progress charts and statistics",
+      "description": "As a user, I want to see my accuracy trends and practice habits so I can track improvement over time.",
+      "acceptanceCriteria": [
+        "New '进度' tab or section showing charts",
+        "Chart 1: Accuracy per practice session (last 7/14/30 days or all), line chart",
+        "Chart 2: Accuracy breakdown by note degree, bar chart",
+        "Chart 3: Daily practice time, bar chart",
+        "Streak counter: '连续练习 5 天' with flame icon",
+        "Stats: total practice time, total sessions, best accuracy, average accuracy",
+        "Use Swift Charts framework",
+        "Empty state: '还没有练习记录，开始练习吧！'",
+        "Typecheck passes"
+      ],
+      "priority": 13,
+      "passes": false,
+      "notes": "New view: ProgressView.swift. Add to TabView in ContentView.swift. Requires Swift Charts (iOS 16+)."
+    },
+    {
+      "id": "US-014",
+      "title": "Daily practice check-in and reminders",
+      "description": "As a user, I want daily practice reminders so I maintain a consistent practice habit.",
+      "acceptanceCriteria": [
+        "Local notification scheduled at user-configurable time (default 19:00): '今天练琴了吗？'",
+        "Check-in: first practice of the day shows a congratulatory toast '🎵 今日打卡成功'",
+        "Calendar view showing practice history: green dots on days practiced",
+        "Notification permission request on first app launch (in onboarding)",
+        "Toggle notification on/off in Settings",
+        "Typecheck passes"
+      ],
+      "priority": 14,
+      "passes": false,
+      "notes": "Use UNUserNotificationCenter. Calendar view with custom SwiftUI or UICalendarView (iOS 16+)."
+    },
+    {
+      "id": "US-015",
+      "title": "Extended score library with 12+ pieces",
+      "description": "As a user, I want more erhu pieces to practice organized by difficulty.",
+      "acceptanceCriteria": [
+        "Add scores: 二泉映月, 良宵, 空山鸟语, 光明行, 江河水, 月夜, 三门峡畅想曲",
+        "Difficulty filter buttons: 全部/入门/初级/中级/高级",
+        "Filter persists during session (remembers selected filter)",
+        "Search by title returns results in <100ms",
+        "Favorites: tap heart icon on score row, filter by '收藏'",
+        "Scores grouped by difficulty in library list with section headers",
+        "Typecheck passes"
+      ],
+      "priority": 15,
+      "passes": false,
+      "notes": "Update ScoreService.swift with new scores. Add difficulty property to Score model. Update ScoreLibraryView with filters."
+    },
+    {
+      "id": "US-016",
+      "title": "iPad and landscape adaptive layout",
+      "description": "As a user, I want to use the app on iPad and in landscape orientation for a better score-reading experience.",
+      "acceptanceCriteria": [
+        "Use size classes: compact (iPhone portrait) vs regular (iPad and landscape) layouts",
+        "Score view shows 2 measures side-by-side in regular width",
+        "Practice controls side panel on iPad (controls on right, score on left)",
+        "ScoreLibraryView uses grid layout (2 columns) on iPad, list on iPhone",
+        "All views properly laid out without overlapping in landscape on iPhone (Keyboard avoid)",
+        "Supported orientations in Info.plist: portrait + landscape for iPad, portrait for iPhone",
+        "Typecheck passes"
+      ],
+      "priority": 16,
+      "passes": false,
+      "notes": "Use @Environment(\\.horizontalSizeClass). Adaptive layouts with ViewThatFits or conditional modifiers."
+    },
+    {
+      "id": "US-017",
+      "title": "Onboarding tutorial flow",
+      "description": "As a new user, I want a guided introduction so I understand how to use the app.",
+      "acceptanceCriteria": [
+        "3-screen onboarding on first launch: (1) 欢迎 - app purpose, (2) 简谱入门 - how to read jianpu, (3) 如何练习 - practice workflow and feedback reading",
+        "Screen 2 shows a mini jianpu example with labels (do re mi fa sol la si)",
+        "Screen 3 shows mockup of practice view with feedback callouts",
+        "'Skip' button on every screen",
+        "'开始使用' button on last screen dismisses onboarding permanently",
+        "Onboarding only shows once (UserDefaults flag 'hasSeenOnboarding')",
+        "Typecheck passes"
+      ],
+      "priority": 17,
+      "passes": false,
+      "notes": "New view: OnboardingView.swift. Use TabView with page style. Check flag in ErhuApp.swift."
+    }
+  ]
+}
