@@ -100,7 +100,7 @@
         "Typecheck passes"
       ],
       "priority": 6,
-      "passes": false,
+      "passes": true,
       "notes": "New file: Sources/ErhuApp/Services/JianpuParser.swift. Pure logic, no UI."
     },
     {
@@ -117,7 +117,7 @@
         "Typecheck passes"
       ],
       "priority": 7,
-      "passes": false,
+      "passes": true,
       "notes": "New view: ScoreEditorView.swift. Update ScoreLibraryView to show custom vs built-in scores."
     },
     {

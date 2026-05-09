@@ -1,0 +1,67 @@
+================================================================================
+RALPH EXECUTION LOG
+================================================================================
+Project: 二胡识谱 - Erhu Score Trainer
+Branch:  ralph/erhu-app-remaining
+Started: 2026-05-08
+Status:  READY
+
+Stories: 17 total | 2 passed | 0 failed | 15 remaining
+================================================================================
+
+[US-001] Xcode project configuration for iOS build
+  Priority: 1  |  Status: DONE  |  Passes: true  |  Notes: Package.swift changed to library target. .xcodeproj generated via XcodeGen. Typechecks pass.
+
+[US-002] YIN pitch detection algorithm for erhu
+  Priority: 2  |  Status: DONE  |  Passes: true  |  Notes: Full YIN with CMND, parabolic interpolation, portamento smoothing (80ms stability). C3-C7 range.
+
+[US-003] Real-time score follower
+  Priority: 3  |  Status: DONE  |  Passes: true  |  Notes: ~33fps follower loop. Rest auto-skip. >100ms match to advance. >500ms silence → waiting state. End-of-score auto-triggers summary.
+
+[US-004] Real-time audio visual feedback
+  Priority: 4  |  Status: DONE  |  Passes: true  |  Notes: Color-coded judgments (green/orange/red). ↑↓ arrows for sharp/flat. Cents label. Frequency display. 0.3s smooth animations.
+
+[US-005] Performance summary after practice
+  Priority: 5  |  Status: DONE  |  Passes: true  |  Notes: PerformanceSummaryView.swift with accuracy ring, stats badges, degree breakdown bars, retry/choose buttons.
+
+[US-006] Jianpu text parser
+  Priority: 6  |  Status: DONE  |  Passes: true  |  Notes: JianpuParser.swift. Parses numbers 1-7, dots for octave, dash/underscore for duration. Bar lines. Error reporting.
+
+[US-007] Score editor and importer UI
+  Priority: 7  |  Status: DONE  |  Passes: true  |  Notes: ScoreEditorView.swift with jianpu editor, live preview, save/edit/delete custom scores.
+
+[US-008] A/B section loop practice
+  Priority: 8  |  Status: PENDING  |  Passes: false
+
+[US-009] Tempo control and metronome
+  Priority: 9  |  Status: PENDING  |  Passes: false
+
+[US-010] Practice session recording
+  Priority: 10  |  Status: PENDING  |  Passes: false
+
+[US-011] Playback comparison with synchronized score
+  Priority: 11  |  Status: PENDING  |  Passes: false
+
+[US-012] Core Data persistence for practice records
+  Priority: 12  |  Status: PENDING  |  Passes: false
+
+[US-013] Progress charts and statistics
+  Priority: 13  |  Status: PENDING  |  Passes: false
+
+[US-014] Daily practice check-in and reminders
+  Priority: 14  |  Status: PENDING  |  Passes: false
+
+[US-015] Extended score library with 12+ pieces
+  Priority: 15  |  Status: PENDING  |  Passes: false
+
+[US-016] iPad and landscape adaptive layout
+  Priority: 16  |  Status: PENDING  |  Passes: false
+
+[US-017] Onboarding tutorial flow
+  Priority: 17  |  Status: PENDING  |  Passes: false
+
+================================================================================
+NOTES
+================================================================================
+US-006: Implemented JianpuParser in Sources/ErhuApp/Services/JianpuParser.swift.
+Supports: 1-7 scale degrees, 0 rest, dots for octave shift, dash (2-beat) and underscore (4-beat) duration, bar lines, parse errors with line/position.
