@@ -57,160 +57,166 @@ struct ProgressView: View {
 
     var body: some View {
         NavigationStack {
-            if records.isEmpty {
-                ContentUnavailableView(
-                    "还没有练习记录",
-                    systemImage: "chart.bar",
-                    description: Text("开始练习吧！完成练习后，你的进度会显示在这里")
-                )
-            } else {
-                ScrollView {
-                    VStack(spacing: 20) {
-                        // Range picker
-                        Picker("时间范围", selection: $selectedRange) {
-                            ForEach(RangeOption.allCases, id: \.self) { option in
-                                Text(option.rawValue).tag(option)
-                            }
-                        }
-                        .pickerStyle(.segmented)
-                        .padding(.horizontal)
-
-                        // Streak counter
-                        HStack {
-                            Image(systemName: "flame.fill")
-                                .foregroundStyle(.orange)
-                            Text("连续练习 \(streakDays) 天")
-                                .font(.headline)
-                            Spacer()
-                        }
-                        .padding(.horizontal)
-
-                        // Summary stats row
-                        HStack(spacing: 16) {
-                            StatBadge(
-                                value: "\(records.count)",
-                                label: "总次数",
-                                color: .blue
-                            )
-                            StatBadge(
-                                value: formatDuration(totalPracticeTime),
-                                label: "总时间",
-                                color: .purple
-                            )
-                            StatBadge(
-                                value: "\(Int(bestAccuracy * 100))%",
-                                label: "最高",
-                                color: .green
-                            )
-                            StatBadge(
-                                value: "\(Int(averageAccuracy * 100))%",
-                                label: "平均",
-                                color: .orange
-                            )
-                        }
-
-                        // Chart 1: Accuracy per session
-                        if !filteredRecords.isEmpty {
-                            VStack(alignment: .leading, spacing: 8) {
-                                Text("准确率趋势")
-                                    .font(.headline)
-                                    .padding(.horizontal)
-
-                                Chart {
-                                    ForEach(filteredRecords.sorted(by: { $0.date < $1.date }), id: \.id) { record in
-                                        LineMark(
-                                            x: .value("日期", record.date, unit: .day),
-                                            y: .value("准确率", record.accuracy * 100)
-                                        )
-                                        .foregroundStyle(.blue)
-
-                                        PointMark(
-                                            x: .value("日期", record.date, unit: .day),
-                                            y: .value("准确率", record.accuracy * 100)
-                                        )
-                                        .foregroundStyle(.blue)
-                                    }
-                                }
-                                .chartYAxisLabel("准确率 (%)")
-                                .chartXAxisLabel("日期")
-                                .frame(height: 200)
-                                .padding(.horizontal)
-                            }
-
-                            // Chart 2: Daily practice time
-                            VStack(alignment: .leading, spacing: 8) {
-                                Text("每日练习时间")
-                                    .font(.headline)
-                                    .padding(.horizontal)
-
-                                Chart {
-                                    ForEach(dailyPracticeTime(), id: \.date) { entry in
-                                        BarMark(
-                                            x: .value("日期", entry.date, unit: .day),
-                                            y: .value("时间", entry.minutes)
-                                        )
-                                        .foregroundStyle(.purple.opacity(0.7))
-                                    }
-                                }
-                                .chartYAxisLabel("分钟")
-                                .chartXAxisLabel("日期")
-                                .frame(height: 200)
-                                .padding(.horizontal)
-                            }
-
-                            // Chart 3: Accuracy by degree
-                            VStack(alignment: .leading, spacing: 8) {
-                                Text("各音准确率")
-                                    .font(.headline)
-                                    .padding(.horizontal)
-
-                                Chart {
-                                    ForEach(degreeAccuracy(), id: \.degree) { item in
-                                        BarMark(
-                                            x: .value("音名", item.label),
-                                            y: .value("准确率", item.accuracy * 100)
-                                        )
-                                        .foregroundStyle(degreeColor(item.degree))
-                                    }
-                                }
-                                .chartYAxisLabel("准确率 (%)")
-                                .frame(height: 200)
-                                .padding(.horizontal)
-                            }
-
-                            // Recent practice list
-                            VStack(alignment: .leading, spacing: 8) {
-                                Text("最近练习")
-                                    .font(.headline)
-                                    .padding(.horizontal)
-
-                                ForEach(records.prefix(10), id: \.id) { record in
-                                    HStack {
-                                        VStack(alignment: .leading) {
-                                            Text(record.scoreTitle)
-                                                .font(.subheadline)
-                                            Text(record.date, style: .date)
-                                                .font(.caption)
-                                                .foregroundStyle(.secondary)
-                                        }
-                                        Spacer()
-                                        Text("\(Int(record.accuracy * 100))%")
-                                            .font(.headline)
-                                            .foregroundStyle(accuracyColor(record.accuracy))
-                                    }
-                                    .padding(.horizontal)
-                                    Divider()
-                                }
-                            }
-                        }
-                    }
-                    .padding(.vertical)
+            Group {
+                if records.isEmpty {
+                    ContentUnavailableView(
+                        "还没有练习记录",
+                        systemImage: "chart.bar",
+                        description: Text("开始练习吧！完成练习后，你的进度会显示在这里")
+                    )
+                } else {
+                    contentView
                 }
             }
             .navigationTitle("进度")
             .onAppear {
                 records = PersistenceController.shared.fetchPracticeRecords()
             }
+        }
+    }
+
+    private var contentView: some View {
+        ScrollView {
+            VStack(spacing: 20) {
+                // Range picker
+                Picker("时间范围", selection: $selectedRange) {
+                    ForEach(RangeOption.allCases, id: \.self) { option in
+                        Text(option.rawValue).tag(option)
+                    }
+                }
+                .pickerStyle(.segmented)
+                .padding(.horizontal)
+
+                // Streak counter
+                HStack {
+                    Image(systemName: "flame.fill")
+                        .foregroundStyle(.orange)
+                    Text("连续练习 \(streakDays) 天")
+                        .font(.headline)
+                    Spacer()
+                }
+                .padding(.horizontal)
+
+                // Summary stats row
+                HStack(spacing: 16) {
+                    StatBadge(
+                        value: "\(records.count)",
+                        label: "总次数",
+                        color: .blue
+                    )
+                    StatBadge(
+                        value: formatDuration(totalPracticeTime),
+                        label: "总时间",
+                        color: .purple
+                    )
+                    StatBadge(
+                        value: "\(Int(bestAccuracy * 100))%",
+                        label: "最高",
+                        color: .green
+                    )
+                    StatBadge(
+                        value: "\(Int(averageAccuracy * 100))%",
+                        label: "平均",
+                        color: .orange
+                    )
+                }
+
+                // Chart 1: Accuracy per session
+                if !filteredRecords.isEmpty {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("准确率趋势")
+                            .font(.headline)
+                            .padding(.horizontal)
+
+                        Chart {
+                            ForEach(filteredRecords.sorted(by: { $0.date < $1.date }), id: \.id) { record in
+                                LineMark(
+                                    x: .value("日期", record.date, unit: .day),
+                                    y: .value("准确率", record.accuracy * 100)
+                                )
+                                .foregroundStyle(.blue)
+
+                                PointMark(
+                                    x: .value("日期", record.date, unit: .day),
+                                    y: .value("准确率", record.accuracy * 100)
+                                )
+                                .foregroundStyle(.blue)
+                            }
+                        }
+                        .chartYAxisLabel("准确率 (%)")
+                        .chartXAxisLabel("日期")
+                        .frame(height: 200)
+                        .padding(.horizontal)
+                    }
+
+                    // Chart 2: Daily practice time
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("每日练习时间")
+                            .font(.headline)
+                            .padding(.horizontal)
+
+                        Chart {
+                            ForEach(dailyPracticeTime(), id: \.date) { entry in
+                                BarMark(
+                                    x: .value("日期", entry.date, unit: .day),
+                                    y: .value("时间", entry.minutes)
+                                )
+                                .foregroundStyle(.purple.opacity(0.7))
+                            }
+                        }
+                        .chartYAxisLabel("分钟")
+                        .chartXAxisLabel("日期")
+                        .frame(height: 200)
+                        .padding(.horizontal)
+                    }
+
+                    // Chart 3: Accuracy by degree
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("各音准确率")
+                            .font(.headline)
+                            .padding(.horizontal)
+
+                        Chart {
+                            ForEach(degreeAccuracy(), id: \.degree) { item in
+                                BarMark(
+                                    x: .value("音名", item.label),
+                                    y: .value("准确率", item.accuracy * 100)
+                                )
+                                .foregroundStyle(degreeColor(item.degree))
+                            }
+                        }
+                        .chartYAxisLabel("准确率 (%)")
+                        .frame(height: 200)
+                        .padding(.horizontal)
+                    }
+
+                    // Recent practice list
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("最近练习")
+                            .font(.headline)
+                            .padding(.horizontal)
+
+                        ForEach(records.prefix(10), id: \.id) { record in
+                            HStack {
+                                VStack(alignment: .leading) {
+                                    Text(record.scoreTitle)
+                                        .font(.subheadline)
+                                    Text(record.date, style: .date)
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                }
+                                Spacer()
+                                Text("\(Int(record.accuracy * 100))%")
+                                    .font(.headline)
+                                    .foregroundStyle(accuracyColor(record.accuracy))
+                            }
+                            .padding(.horizontal)
+                            Divider()
+                        }
+                    }
+                }
+            }
+            .padding(.vertical)
         }
     }
 

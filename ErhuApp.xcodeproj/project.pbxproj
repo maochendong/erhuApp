@@ -1,0 +1,312 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 54;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0BF8BD012529F0241A3FF4DF /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4C4A5D83AEB8885507651E7 /* ContentView.swift */; };
+		2CAECD5D1C246195B1766B4F /* NoteDetailEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BC745C8CB8312766392C7DC /* NoteDetailEntity.swift */; };
+		319A0AC2467BF632D1CAFA6A /* RecordingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F252D745A0A135C8B9EEBC8D /* RecordingService.swift */; };
+		669DD292CDDD114E925627C9 /* Metronome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 479E35202A39A9495E2E39AF /* Metronome.swift */; };
+		6CBDA824F4465747E00605BA /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45D4299A211431877CA18AFD /* SettingsView.swift */; };
+		72A800D80362CDD67C1845E2 /* ErhuApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9816CC3A5541697C9C399860 /* ErhuApp.swift */; };
+		7671ED1E882209FF03C915A4 /* Note.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9996ADC66C626076BA3EE1CA /* Note.swift */; };
+		806492612B391BAE64EB7A64 /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6276B47EA2D075C6A53002E8 /* NotificationManager.swift */; };
+		863FC8B585F24D10CCD902EA /* PerformanceSummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFA99EEAB9BA56BE8BC9B12D /* PerformanceSummaryView.swift */; };
+		86AF87BDD67B4A51D592C5AE /* Score.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4FC65F7E0A8DFF45906303E /* Score.swift */; };
+		A1896241E9BB3C2B4520F9B0 /* PracticeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39790F319D15AA28D3DBF877 /* PracticeView.swift */; };
+		A39658C087BCCD690E45EA9C /* ScoreEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96FF9D4979396F7AAAF356AC /* ScoreEditorView.swift */; };
+		B0E9C65D18E1A967EE76D329 /* ScoreView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A778DF74E294720D744F108 /* ScoreView.swift */; };
+		B60AF9ECD740EBEC7E6129C4 /* ProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D97CCCB7FFEE51E6EC0EA521 /* ProgressView.swift */; };
+		CCE9B10DF2671F98AB2D835B /* ScoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CBAD604C4880C862FBEB150 /* ScoreService.swift */; };
+		D0338273039078CC72816060 /* JianpuParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45EE43319B0F2B5F075FE30F /* JianpuParser.swift */; };
+		E16151B95108A0D56FE9D064 /* ScoreLibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABDBA1E6BDF6BCA22F1BA515 /* ScoreLibraryView.swift */; };
+		E52540440621FC6D1FE93D4F /* AudioEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5D023B499C112DFA02520D4 /* AudioEngine.swift */; };
+		E7AA2B1BE57E1C9FA6B5BDFC /* PlaybackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05478898157D126ECC327600 /* PlaybackView.swift */; };
+		E9E57AC166A8AD1EE9D042EE /* PracticeRecordEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = A302F81489E3FF4767E7B960 /* PracticeRecordEntity.swift */; };
+		EB13655AB556B76BF17D2EFE /* PersistenceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC4C1BBC21EE009EFF925E0E /* PersistenceController.swift */; };
+		F6611F9F57C8BA161B210A50 /* Lesson.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48D92F3BA062793ACDD4F3DC /* Lesson.swift */; };
+		F7212FAF4E55691EEDC5C06E /* RecordingListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3C97D465EBBCD41B1AE9995 /* RecordingListView.swift */; };
+		F792AD5632C4CACE91001832 /* PitchJudger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 858369943CE752BA636425A2 /* PitchJudger.swift */; };
+		FED4FD3967C9FE3EE04B100A /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 798ECBA606F5780E8412766B /* OnboardingView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		05478898157D126ECC327600 /* PlaybackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaybackView.swift; sourceTree = "<group>"; };
+		39790F319D15AA28D3DBF877 /* PracticeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PracticeView.swift; sourceTree = "<group>"; };
+		3BC745C8CB8312766392C7DC /* NoteDetailEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteDetailEntity.swift; sourceTree = "<group>"; };
+		45D4299A211431877CA18AFD /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		45EE43319B0F2B5F075FE30F /* JianpuParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JianpuParser.swift; sourceTree = "<group>"; };
+		479E35202A39A9495E2E39AF /* Metronome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Metronome.swift; sourceTree = "<group>"; };
+		48D92F3BA062793ACDD4F3DC /* Lesson.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Lesson.swift; sourceTree = "<group>"; };
+		5A778DF74E294720D744F108 /* ScoreView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoreView.swift; sourceTree = "<group>"; };
+		5CBAD604C4880C862FBEB150 /* ScoreService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoreService.swift; sourceTree = "<group>"; };
+		6276B47EA2D075C6A53002E8 /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
+		6921955CC7AB8D33073A0426 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		798ECBA606F5780E8412766B /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
+		7FEB17CC7128B07A3D629958 /* ErhuApp.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = ErhuApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		858369943CE752BA636425A2 /* PitchJudger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PitchJudger.swift; sourceTree = "<group>"; };
+		96FF9D4979396F7AAAF356AC /* ScoreEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoreEditorView.swift; sourceTree = "<group>"; };
+		9816CC3A5541697C9C399860 /* ErhuApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErhuApp.swift; sourceTree = "<group>"; };
+		9996ADC66C626076BA3EE1CA /* Note.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Note.swift; sourceTree = "<group>"; };
+		A302F81489E3FF4767E7B960 /* PracticeRecordEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PracticeRecordEntity.swift; sourceTree = "<group>"; };
+		ABDBA1E6BDF6BCA22F1BA515 /* ScoreLibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoreLibraryView.swift; sourceTree = "<group>"; };
+		C4C4A5D83AEB8885507651E7 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		D3C97D465EBBCD41B1AE9995 /* RecordingListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingListView.swift; sourceTree = "<group>"; };
+		D4FC65F7E0A8DFF45906303E /* Score.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Score.swift; sourceTree = "<group>"; };
+		D97CCCB7FFEE51E6EC0EA521 /* ProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressView.swift; sourceTree = "<group>"; };
+		DFA99EEAB9BA56BE8BC9B12D /* PerformanceSummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerformanceSummaryView.swift; sourceTree = "<group>"; };
+		E5D023B499C112DFA02520D4 /* AudioEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioEngine.swift; sourceTree = "<group>"; };
+		F252D745A0A135C8B9EEBC8D /* RecordingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingService.swift; sourceTree = "<group>"; };
+		FC4C1BBC21EE009EFF925E0E /* PersistenceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceController.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		2F1ACF1B8FEDE564D98C04ED /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				7FEB17CC7128B07A3D629958 /* ErhuApp.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		3279486059AF38AF728E01D7 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				48D92F3BA062793ACDD4F3DC /* Lesson.swift */,
+				9996ADC66C626076BA3EE1CA /* Note.swift */,
+				3BC745C8CB8312766392C7DC /* NoteDetailEntity.swift */,
+				A302F81489E3FF4767E7B960 /* PracticeRecordEntity.swift */,
+				D4FC65F7E0A8DFF45906303E /* Score.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		4D572ADB450EF40BA7C04026 /* ErhuApp */ = {
+			isa = PBXGroup;
+			children = (
+				9816CC3A5541697C9C399860 /* ErhuApp.swift */,
+				6921955CC7AB8D33073A0426 /* Info.plist */,
+				9F00F20D2638A9226881CC0B /* Audio */,
+				3279486059AF38AF728E01D7 /* Models */,
+				D6B04A60C5F5B3928E640170 /* Services */,
+				738FF03E6256D3AE906FD659 /* Views */,
+			);
+			name = ErhuApp;
+			path = Sources/ErhuApp;
+			sourceTree = "<group>";
+		};
+		738FF03E6256D3AE906FD659 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				C4C4A5D83AEB8885507651E7 /* ContentView.swift */,
+				798ECBA606F5780E8412766B /* OnboardingView.swift */,
+				DFA99EEAB9BA56BE8BC9B12D /* PerformanceSummaryView.swift */,
+				05478898157D126ECC327600 /* PlaybackView.swift */,
+				39790F319D15AA28D3DBF877 /* PracticeView.swift */,
+				D97CCCB7FFEE51E6EC0EA521 /* ProgressView.swift */,
+				D3C97D465EBBCD41B1AE9995 /* RecordingListView.swift */,
+				96FF9D4979396F7AAAF356AC /* ScoreEditorView.swift */,
+				ABDBA1E6BDF6BCA22F1BA515 /* ScoreLibraryView.swift */,
+				5A778DF74E294720D744F108 /* ScoreView.swift */,
+				45D4299A211431877CA18AFD /* SettingsView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		77119C109BA820B7456708B0 = {
+			isa = PBXGroup;
+			children = (
+				4D572ADB450EF40BA7C04026 /* ErhuApp */,
+				2F1ACF1B8FEDE564D98C04ED /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		9F00F20D2638A9226881CC0B /* Audio */ = {
+			isa = PBXGroup;
+			children = (
+				E5D023B499C112DFA02520D4 /* AudioEngine.swift */,
+				479E35202A39A9495E2E39AF /* Metronome.swift */,
+			);
+			path = Audio;
+			sourceTree = "<group>";
+		};
+		D6B04A60C5F5B3928E640170 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				45EE43319B0F2B5F075FE30F /* JianpuParser.swift */,
+				6276B47EA2D075C6A53002E8 /* NotificationManager.swift */,
+				FC4C1BBC21EE009EFF925E0E /* PersistenceController.swift */,
+				858369943CE752BA636425A2 /* PitchJudger.swift */,
+				F252D745A0A135C8B9EEBC8D /* RecordingService.swift */,
+				5CBAD604C4880C862FBEB150 /* ScoreService.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		"TEMP_8FD90C8C-B7C8-4C21-B0B7-DCE651B3AE18" /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		66BFB5097F9596257A1CB2DA /* ErhuApp */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BAE6B00B8E0AF3EB0A26E0ED /* Build configuration list for PBXNativeTarget "ErhuApp" */;
+			buildPhases = (
+				FA578BC17D0E980B685F7F8D /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ErhuApp;
+			productName = ErhuApp;
+			productReference = 7FEB17CC7128B07A3D629958 /* ErhuApp.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		BDA2C4A0A1C9AAF4F7326D1B /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1600;
+				TargetAttributes = {
+				};
+			};
+			buildConfigurationList = CB32B262B16FB24EFBEF39AA /* Build configuration list for PBXProject "ErhuApp" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 77119C109BA820B7456708B0;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				66BFB5097F9596257A1CB2DA /* ErhuApp */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		FA578BC17D0E980B685F7F8D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E52540440621FC6D1FE93D4F /* AudioEngine.swift in Sources */,
+				0BF8BD012529F0241A3FF4DF /* ContentView.swift in Sources */,
+				72A800D80362CDD67C1845E2 /* ErhuApp.swift in Sources */,
+				D0338273039078CC72816060 /* JianpuParser.swift in Sources */,
+				F6611F9F57C8BA161B210A50 /* Lesson.swift in Sources */,
+				669DD292CDDD114E925627C9 /* Metronome.swift in Sources */,
+				7671ED1E882209FF03C915A4 /* Note.swift in Sources */,
+				2CAECD5D1C246195B1766B4F /* NoteDetailEntity.swift in Sources */,
+				806492612B391BAE64EB7A64 /* NotificationManager.swift in Sources */,
+				FED4FD3967C9FE3EE04B100A /* OnboardingView.swift in Sources */,
+				863FC8B585F24D10CCD902EA /* PerformanceSummaryView.swift in Sources */,
+				EB13655AB556B76BF17D2EFE /* PersistenceController.swift in Sources */,
+				F792AD5632C4CACE91001832 /* PitchJudger.swift in Sources */,
+				E7AA2B1BE57E1C9FA6B5BDFC /* PlaybackView.swift in Sources */,
+				E9E57AC166A8AD1EE9D042EE /* PracticeRecordEntity.swift in Sources */,
+				A1896241E9BB3C2B4520F9B0 /* PracticeView.swift in Sources */,
+				B60AF9ECD740EBEC7E6129C4 /* ProgressView.swift in Sources */,
+				F7212FAF4E55691EEDC5C06E /* RecordingListView.swift in Sources */,
+				319A0AC2467BF632D1CAFA6A /* RecordingService.swift in Sources */,
+				86AF87BDD67B4A51D592C5AE /* Score.swift in Sources */,
+				A39658C087BCCD690E45EA9C /* ScoreEditorView.swift in Sources */,
+				E16151B95108A0D56FE9D064 /* ScoreLibraryView.swift in Sources */,
+				CCE9B10DF2671F98AB2D835B /* ScoreService.swift in Sources */,
+				B0E9C65D18E1A967EE76D329 /* ScoreView.swift in Sources */,
+				6CBDA824F4465747E00605BA /* SettingsView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		5AA5AB37F34F3CF2F10D287E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = Sources/ErhuApp/Info.plist;
+				PRODUCT_BUNDLE_IDENTIFIER = com.erhu.app;
+				PRODUCT_NAME = ErhuApp;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+		9BD124D8CC3D6C39C78D66A6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		E3E9316279992E7CB1A7A19D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		F0014C901A61A98E77C51B9A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = Sources/ErhuApp/Info.plist;
+				PRODUCT_BUNDLE_IDENTIFIER = com.erhu.app;
+				PRODUCT_NAME = ErhuApp;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		BAE6B00B8E0AF3EB0A26E0ED /* Build configuration list for PBXNativeTarget "ErhuApp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5AA5AB37F34F3CF2F10D287E /* Debug */,
+				F0014C901A61A98E77C51B9A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		CB32B262B16FB24EFBEF39AA /* Build configuration list for PBXProject "ErhuApp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E3E9316279992E7CB1A7A19D /* Debug */,
+				9BD124D8CC3D6C39C78D66A6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = BDA2C4A0A1C9AAF4F7326D1B /* Project object */;
+}

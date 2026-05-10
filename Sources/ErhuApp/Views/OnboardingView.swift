@@ -23,7 +23,7 @@ struct OnboardingView: View {
 
                 Image(systemName: "music.mic")
                     .font(.system(size: 60))
-                    .foregroundStyle(.accent)
+                    .foregroundStyle(Color.accentColor)
 
                 Text("如何练习")
                     .font(.largeTitle.weight(.bold))
@@ -92,7 +92,7 @@ struct OnboardingPage: View {
 
             Image(systemName: image)
                 .font(.system(size: 60))
-                .foregroundStyle(.accent)
+                .foregroundStyle(Color.accentColor)
 
             Text(title)
                 .font(.largeTitle.weight(.bold))

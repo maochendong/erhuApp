@@ -2,15 +2,15 @@ import Foundation
 import UserNotifications
 
 /// Manages local notifications for daily practice reminders.
-final class NotificationManager {
+final class NotificationManager: @unchecked Sendable {
     static let shared = NotificationManager()
 
     private init() {}
 
     /// Request notification permission
-    func requestPermission(completion: @escaping (Bool) -> Void = { _ in }) {
+    func requestPermission(completion: @MainActor @escaping (Bool) -> Void = { _ in }) {
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { granted, _ in
-            DispatchQueue.main.async {
+            Task { @MainActor in
                 completion(granted)
             }
         }

@@ -116,7 +116,7 @@ struct PlaybackView: View {
                 } label: {
                     Image(systemName: isPlaying ? "pause.circle.fill" : "play.circle.fill")
                         .font(.system(size: 44))
-                        .foregroundStyle(.accentColor)
+                        .foregroundStyle(Color.accentColor)
                 }
             }
             .padding(.horizontal)

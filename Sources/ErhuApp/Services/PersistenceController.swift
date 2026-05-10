@@ -1,7 +1,7 @@
 import CoreData
 
 /// Core Data stack for persisting practice records and user data.
-final class PersistenceController {
+final class PersistenceController: @unchecked Sendable {
     static let shared = PersistenceController()
 
     let persistentStoreCoordinator: NSPersistentStoreCoordinator
@@ -21,7 +21,8 @@ final class PersistenceController {
             ]
         )
 
-        viewContext = NSManagedObjectContext(concurrencyType: .mainQueueUsageType)
+        let concurrencyType = NSManagedObjectContext.ConcurrencyType.mainQueue
+        viewContext = NSManagedObjectContext(concurrencyType)
         viewContext.persistentStoreCoordinator = persistentStoreCoordinator
         viewContext.automaticallyMergesChangesFromParent = true
     }
@@ -69,13 +70,13 @@ final class PersistenceController {
     }
 
     func fetchPracticeRecords() -> [PracticeRecordEntity] {
-        let request = PracticeRecordEntity.fetchRequest()
+        let request: NSFetchRequest<PracticeRecordEntity> = PracticeRecordEntity.fetchRequest() as! NSFetchRequest<PracticeRecordEntity>
         request.sortDescriptors = [NSSortDescriptor(keyPath: \PracticeRecordEntity.date, ascending: false)]
         return (try? viewContext.fetch(request)) ?? []
     }
 
     func fetchPracticeRecords(forScore title: String) -> [PracticeRecordEntity] {
-        let request = PracticeRecordEntity.fetchRequest()
+        let request: NSFetchRequest<PracticeRecordEntity> = PracticeRecordEntity.fetchRequest() as! NSFetchRequest<PracticeRecordEntity>
         request.predicate = NSPredicate(format: "scoreTitle == %@", title)
         request.sortDescriptors = [NSSortDescriptor(keyPath: \PracticeRecordEntity.date, ascending: true)]
         return (try? viewContext.fetch(request)) ?? []
@@ -98,7 +99,7 @@ final class PersistenceController {
 
         let recordId = NSAttributeDescription()
         recordId.name = "id"
-        recordId.type = .UUID
+        recordId.type = .uuid
         recordId.isOptional = false
 
         let recordDate = NSAttributeDescription()
@@ -141,7 +142,7 @@ final class PersistenceController {
 
         let detailId = NSAttributeDescription()
         detailId.name = "id"
-        detailId.type = .UUID
+        detailId.type = .uuid
         detailId.isOptional = false
 
         let detailNoteIndex = NSAttributeDescription()
