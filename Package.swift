@@ -7,11 +7,11 @@ let package = Package(
         .iOS(.v18)
     ],
     products: [
-        .executable(name: "ErhuApp", targets: ["ErhuApp"])
+        .library(name: "ErhuApp", targets: ["ErhuApp"])
     ],
     dependencies: [],
     targets: [
-        .executableTarget(
+        .target(
             name: "ErhuApp",
             resources: [
                 .process("Resources")

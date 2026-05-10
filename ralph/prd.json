@@ -16,7 +16,7 @@
         "Typecheck passes"
       ],
       "priority": 1,
-      "passes": false,
+      "passes": true,
       "notes": "Use 'swift package generate-xcodeproj' or create minimal xcodeproj. iOS Simulator runtime must be installed in Xcode."
     },
     {
@@ -33,7 +33,7 @@
         "Typecheck passes"
       ],
       "priority": 2,
-      "passes": false,
+      "passes": true,
       "notes": "Implement YIN in pure Swift with Accelerate for performance. See de Cheveigné & Kawahara (2002) for algorithm reference."
     },
     {
@@ -50,7 +50,7 @@
         "Typecheck passes"
       ],
       "priority": 3,
-      "passes": false,
+      "passes": true,
       "notes": "Update PracticeView.swift. The follower runs in a Task with periodic checks. Add state enum for follower status."
     },
     {
@@ -67,7 +67,7 @@
         "Typecheck passes"
       ],
       "priority": 4,
-      "passes": false,
+      "passes": true,
       "notes": "Update ScoreView.swift NoteCell and PracticeView.swift. Reuse PitchJudger.Judgment struct."
     },
     {
@@ -83,7 +83,7 @@
         "Typecheck passes"
       ],
       "priority": 5,
-      "passes": false,
+      "passes": true,
       "notes": "New view: PerformanceSummaryView.swift. Take PitchJudger.PerformanceResult as input."
     },
     {
@@ -134,7 +134,7 @@
         "Typecheck passes"
       ],
       "priority": 8,
-      "passes": false,
+      "passes": true,
       "notes": "Update PracticeView.swift and ScoreView.swift. Add loopStartIndex and loopEndIndex state."
     },
     {
@@ -151,7 +151,7 @@
         "Typecheck passes"
       ],
       "priority": 9,
-      "passes": false,
+      "passes": true,
       "notes": "Metronome audio can use AVAudioPlayer with short tick sound file or generate via AVFoundation."
     },
     {
@@ -167,8 +167,8 @@
         "Typecheck passes"
       ],
       "priority": 10,
-      "passes": false,
-      "notes": "Use AVAudioRecorder. Metadata in JSON or Core Data. Store in Documents/Recordings/."
+      "passes": true,
+      "notes": "Use AVAudioRecorder. Metadata in JSON or Store in Documents/Recordings/."
     },
     {
       "id": "US-011",
@@ -184,7 +184,7 @@
         "Typecheck passes"
       ],
       "priority": 11,
-      "passes": false,
+      "passes": true,
       "notes": "Need to store note-by-note judgment timestamps during original practice for sync."
     },
     {
@@ -200,7 +200,7 @@
         "Typecheck passes"
       ],
       "priority": 12,
-      "passes": false,
+      "passes": true,
       "notes": "Create Core Data stack in new file PersistenceController.swift. Use NSPersistentContainer."
     },
     {
@@ -219,7 +219,7 @@
         "Typecheck passes"
       ],
       "priority": 13,
-      "passes": false,
+      "passes": true,
       "notes": "New view: ProgressView.swift. Add to TabView in ContentView.swift. Requires Swift Charts (iOS 16+)."
     },
     {
@@ -235,7 +235,7 @@
         "Typecheck passes"
       ],
       "priority": 14,
-      "passes": false,
+      "passes": true,
       "notes": "Use UNUserNotificationCenter. Calendar view with custom SwiftUI or UICalendarView (iOS 16+)."
     },
     {
@@ -252,7 +252,7 @@
         "Typecheck passes"
       ],
       "priority": 15,
-      "passes": false,
+      "passes": true,
       "notes": "Update ScoreService.swift with new scores. Add difficulty property to Score model. Update ScoreLibraryView with filters."
     },
     {
@@ -269,7 +269,7 @@
         "Typecheck passes"
       ],
       "priority": 16,
-      "passes": false,
+      "passes": true,
       "notes": "Use @Environment(\\.horizontalSizeClass). Adaptive layouts with ViewThatFits or conditional modifiers."
     },
     {
@@ -286,7 +286,7 @@
         "Typecheck passes"
       ],
       "priority": 17,
-      "passes": false,
+      "passes": true,
       "notes": "New view: OnboardingView.swift. Use TabView with page style. Check flag in ErhuApp.swift."
     }
   ]

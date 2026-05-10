@@ -13,6 +13,12 @@ struct Score: Identifiable, Codable {
     var keySignature: Int
     /// Tempo in BPM
     var tempo: Int
+    /// Difficulty level for filtering
+    var difficulty: Difficulty
+    /// Whether this is a user-created custom score
+    var isCustom: Bool
+    /// Whether this score is favorited by the user
+    var isFavorite: Bool
     /// All measures (小节) in the score
     var measures: [Measure]
 
@@ -24,6 +30,9 @@ struct Score: Identifiable, Codable {
         timeSignatureBottom: Int = 4,
         keySignature: Int = 0,
         tempo: Int = 60,
+        difficulty: Difficulty = .beginner,
+        isCustom: Bool = false,
+        isFavorite: Bool = false,
         measures: [Measure] = []
     ) {
         self.id = id
@@ -33,6 +42,9 @@ struct Score: Identifiable, Codable {
         self.timeSignatureBottom = timeSignatureBottom
         self.keySignature = keySignature
         self.tempo = tempo
+        self.difficulty = difficulty
+        self.isCustom = isCustom
+        self.isFavorite = isFavorite
         self.measures = measures
     }
 

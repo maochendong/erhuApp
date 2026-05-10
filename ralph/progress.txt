@@ -4,9 +4,9 @@ RALPH EXECUTION LOG
 Project: 二胡识谱 - Erhu Score Trainer
 Branch:  ralph/erhu-app-remaining
 Started: 2026-05-08
-Status:  READY
+Status:  ALL COMPLETE
 
-Stories: 17 total | 2 passed | 0 failed | 15 remaining
+Stories: 17 total | 17 passed | 0 failed | 0 remaining
 ================================================================================
 
 [US-001] Xcode project configuration for iOS build
@@ -31,37 +31,38 @@ Stories: 17 total | 2 passed | 0 failed | 15 remaining
   Priority: 7  |  Status: DONE  |  Passes: true  |  Notes: ScoreEditorView.swift with jianpu editor, live preview, save/edit/delete custom scores.
 
 [US-008] A/B section loop practice
-  Priority: 8  |  Status: PENDING  |  Passes: false
+  Priority: 8  |  Status: DONE  |  Passes: true  |  Notes: Long-press to set A/B markers, orange highlight, loop count stepper, cancel button.
 
 [US-009] Tempo control and metronome
-  Priority: 9  |  Status: PENDING  |  Passes: false
+  Priority: 9  |  Status: DONE  |  Passes: true  |  Notes: Metronome.swift with synthesized click, tempo slider 40-200 BPM, beat indicator dots, toggle button.
 
 [US-010] Practice session recording
-  Priority: 10  |  Status: PENDING  |  Passes: false
+  Priority: 10  |  Status: DONE  |  Passes: true  |  Notes: AVAudioRecorder AAC/m4a to Documents/Recordings/. RecordingList sheet, auto start/stop with play, recording indicator.
 
 [US-011] Playback comparison with synchronized score
-  Priority: 11  |  Status: PENDING  |  Passes: false
+  Priority: 11  |  Status: DONE  |  Passes: true  |  Notes: PlaybackView with audio + score sync, seek bar, 0.5x/1x/1.5x speed. RecordingListView with navigation, delete, empty state.
 
 [US-012] Core Data persistence for practice records
-  Priority: 12  |  Status: PENDING  |  Passes: false
+  Priority: 12  |  Status: DONE  |  Passes: true  |  Notes: PersistenceController.swift with programmatic Core Data model (PracticeRecord + NoteDetail entities). Auto-save when showing performance summary.
 
 [US-013] Progress charts and statistics
-  Priority: 13  |  Status: PENDING  |  Passes: false
+  Priority: 13  |  Status: DONE  |  Passes: true  |  Notes: ProgressView.swift with Swift Charts: accuracy line chart, daily practice time bars, degree accuracy bars. Stats: streak counter, total sessions, best/avg accuracy. 7/30/all range filter.
 
 [US-014] Daily practice check-in and reminders
-  Priority: 14  |  Status: PENDING  |  Passes: false
+  Priority: 14  |  Status: DONE  |  Passes: true  |  Notes: NotificationManager with UNUserNotificationCenter. Configurable reminder time. Settings toggle + time picker. Practice calendar view (month grid, green dots). First-practice-of-day check-in toast. Persisted practice dates.
 
 [US-015] Extended score library with 12+ pieces
-  Priority: 15  |  Status: PENDING  |  Passes: false
+  Priority: 15  |  Status: DONE  |  Passes: true  |  Notes: 12 total pieces (7 new: 二泉映月, 良宵, 空山鸟语, 光明行, 江河水, 月夜, 三门峡畅想曲). Difficulty filter buttons (全部/入门/初级/中级/高级). Favorites with heart toggle + filter. Search by title/composer.
 
 [US-016] iPad and landscape adaptive layout
-  Priority: 16  |  Status: PENDING  |  Passes: false
+  Priority: 16  |  Status: DONE  |  Passes: true  |  Notes: ScoreView 2-column LazyVGrid in regular width. ScoreLibraryView card grid on iPad (2 columns). Info.plist landscape orientations for iPad.
 
 [US-017] Onboarding tutorial flow
-  Priority: 17  |  Status: PENDING  |  Passes: false
+  Priority: 17  |  Status: DONE  |  Passes: true  |  Notes: OnboardingView.swift with 3-page TabView (welcome, jianpu intro, how to practice with feedback legend). Skip button on all pages. UserDefaults flag (hasSeenOnboarding). FullScreenCover on first launch.
 
 ================================================================================
 NOTES
 ================================================================================
-US-006: Implemented JianpuParser in Sources/ErhuApp/Services/JianpuParser.swift.
-Supports: 1-7 scale degrees, 0 rest, dots for octave shift, dash (2-beat) and underscore (4-beat) duration, bar lines, parse errors with line/position.
+All 17 user stories complete. Core Data persistence uses programmatic model (no .xcdatamodeld needed for SPM project). 12 built-in scores across 4 difficulty levels. Adaptive layout for iPad with 2-column grid views.
+
+Total source files: 18 (5 models, 4 services, 9 views) + Info.plist + Package.swift

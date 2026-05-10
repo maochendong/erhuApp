@@ -1,0 +1,45 @@
+name: ErhuApp
+targets:
+  ErhuApp:
+    type: application
+    platform: iOS
+    deploymentTarget: "18.0"
+    sources:
+      - Sources/ErhuApp
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.erhu.app
+        INFOPLIST_FILE: Sources/ErhuApp/Info.plist
+        SWIFT_VERSION: "6.0"
+        TARGETED_DEVICE_FAMILY: "1,2"
+        SUPPORTED_PLATFORMS: "iphoneos iphonesimulator"
+        SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD: YES
+      configs:
+        Debug:
+          CODE_SIGN_IDENTITY: ""
+          CODE_SIGNING_REQUIRED: NO
+        Release:
+          CODE_SIGN_IDENTITY: ""
+          CODE_SIGNING_REQUIRED: NO
+    info:
+      path: Sources/ErhuApp/Info.plist
+      properties:
+        CFBundleDisplayName: 二胡识谱
+        CFBundleDevelopmentRegion: zh_CN
+        CFBundleExecutable: $(EXECUTABLE_NAME)
+        CFBundleIdentifier: com.erhu.app
+        CFBundleInfoDictionaryVersion: "6.0"
+        CFBundleName: ErhuApp
+        CFBundlePackageType: APPL
+        CFBundleShortVersionString: "1.0"
+        CFBundleVersion: "1"
+        LSRequiresIPhoneOS: true
+        UIBackgroundModes:
+          - audio
+        UILaunchScreen: {}
+        UIRequiredDeviceCapabilities:
+          - armv7
+          - microphone
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+        NSMicrophoneUsageDescription: 二胡识谱需要使用麦克风来检测您的演奏音高，以便判断音准是否正确。

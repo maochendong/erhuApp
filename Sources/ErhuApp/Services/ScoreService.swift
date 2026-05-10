@@ -1,27 +1,89 @@
 import Foundation
 
 /// Provides built-in erhu scores and manages score data
-final class ScoreService {
+final class ScoreService: @unchecked Sendable {
     static let shared = ScoreService()
 
     var scores: [Score] = []
+    /// User-created custom scores (lives in-memory for the session)
+    var customScores: [Score] = []
+    /// Persisted favorite score IDs
+    private var favoriteIds: Set<UUID> = []
 
     private init() {
+        loadFavorites()
         scores = builtInScores()
+        // Apply saved favorites to built-in scores
+        for i in scores.indices {
+            if favoriteIds.contains(scores[i].id) {
+                scores[i].isFavorite = true
+            }
+        }
+    }
+
+    /// All scores including custom ones
+    var allScores: [Score] {
+        scores + customScores
     }
 
     func score(by id: UUID) -> Score? {
-        scores.first { $0.id == id }
+        allScores.first { $0.id == id }
     }
 
-    // MARK: - Built-in scores
+    func addCustomScore(_ score: Score) {
+        customScores.append(score)
+    }
+
+    func updateCustomScore(id: UUID, newScore: Score) {
+        if let idx = customScores.firstIndex(where: { $0.id == id }) {
+            customScores[idx] = newScore
+        }
+    }
+
+    func deleteCustomScore(id: UUID) {
+        customScores.removeAll { $0.id == id }
+    }
+
+    // MARK: - Favorites
+
+    func toggleFavorite(scoreId: UUID) {
+        if favoriteIds.contains(scoreId) {
+            favoriteIds.remove(scoreId)
+        } else {
+            favoriteIds.insert(scoreId)
+        }
+        if let idx = scores.firstIndex(where: { $0.id == scoreId }) {
+            scores[idx].isFavorite.toggle()
+        }
+        saveFavorites()
+    }
+
+    func isFavorite(scoreId: UUID) -> Bool {
+        favoriteIds.contains(scoreId)
+    }
+
+    var favoritedScoreIds: Set<UUID> { favoriteIds }
+
+    private func saveFavorites() {
+        let ids = Array(favoriteIds).map { $0.uuidString }
+        UserDefaults.standard.set(ids, forKey: "favoriteScoreIds")
+    }
+
+    private func loadFavorites() {
+        guard let ids = UserDefaults.standard.stringArray(forKey: "favoriteScoreIds") else { return }
+        favoriteIds = Set(ids.compactMap { UUID(uuidString: $0) })
+    }
+
+    // MARK: - Built-in scores (12+ pieces)
 
     private func builtInScores() -> [Score] {
         [
+            //—— Beginner ——
             makeScore(
                 title: "小星星",
                 composer: "传统儿歌",
                 tempo: 100,
+                difficulty: .beginner,
                 notes: [
                     1,1,5,5,6,6,5, 4,4,3,3,2,2,1,
                     5,5,4,4,3,3,2, 5,5,4,4,3,3,2,
@@ -32,6 +94,7 @@ final class ScoreService {
                 title: "两只老虎",
                 composer: "传统儿歌",
                 tempo: 110,
+                difficulty: .beginner,
                 notes: [
                     1,2,3,1, 1,2,3,1,
                     3,4,5,  3,4,5,
@@ -40,9 +103,28 @@ final class ScoreService {
                 ]
             ),
             makeScore(
+                title: "摇篮曲",
+                composer: "东北民歌",
+                tempo: 70,
+                difficulty: .beginner,
+                notes: [
+                    1,1,5,  5,6,5,  3,3,2,  1,0,
+                    5,5,3,  3,2,1,  6,5,3,  2,0,
+                    1,1,5,  5,6,5,  3,3,2,  1,0,
+                    5,5,3,  3,2,1,  2,2,1,  1,0,
+                    3,3,5,  6,5,3,  5,3,2,  1,0,
+                    5,5,3,  3,2,1,  6,5,3,  2,0,
+                    1,1,5,  5,6,5,  3,3,2,  1,0,
+                    5,5,3,  3,2,1,  2,2,1,  1,0
+                ]
+            ),
+
+            //—— Elementary ——
+            makeScore(
                 title: "茉莉花",
                 composer: "江苏民歌",
                 tempo: 80,
+                difficulty: .elementary,
                 notes: [
                     5,5,6,1,6,5, 5,5,6,1,6,5,
                     6,1,3,2,3,  6,1,3,2,3,
@@ -54,27 +136,13 @@ final class ScoreService {
                     1,3,2,1, 1,3,2,1
                 ]
             ),
-            makeScore(
-                title: "摇篮曲",
-                composer: "东北民歌",
-                tempo: 70,
-                notes: [
-                    1,1,5,  5,6,5,  3,3,2,  1,0,
-                    5,5,3,  3,2,1,  6,5,3,  2,0,
-                    1,1,5,  5,6,5,  3,3,2,  1,0,
-                    5,5,3,  3,2,1,  2,2,1,  1,0,
-                    3,3,5,  6,5,3,  5,3,2,  1,0,
-                    5,5,3,  3,2,1,  6,5,3,  2,0,
-                    1,1,5,  5,6,5,  3,3,2,  1,0,
-                    5,5,3,  3,2,1,  2,2,1,  1,0,
-                    3,3,5,  6,5,3,  5,3,2,  1,0,
-                    5,5,3,  3,2,1,  2,2,1,  1,0,
-                ]
-            ),
+
+            //—— Intermediate ——
             makeScore(
                 title: "赛马",
                 composer: "黄海怀",
                 tempo: 150,
+                difficulty: .intermediate,
                 notes: [
                     3,3,5,  6,6,5,  3,3,5,  6,6,5,
                     1,1,2,  3,3,2,  1,1,2,  3,3,2,
@@ -85,13 +153,131 @@ final class ScoreService {
                     1,1,2,  3,3,2,  1,1,2,  3,3,2,
                     5,5,3,  2,2,1,  5,5,3,  2,2,1,
                     6,6,5,  3,3,2,  1,1,2,  3,3,5,
-                    6,6,5,  3,3,5,  6,6,1,  2,2,1,
+                    6,6,5,  3,3,5,  6,6,1,  2,2,1
+                ]
+            ),
+            makeScore(
+                title: "良宵",
+                composer: "刘天华",
+                tempo: 80,
+                difficulty: .intermediate,
+                notes: [
+                    3,3,5,  6,1,6,  5,3,5,  6,5,3,
+                    2,3,5,  6,5,3,  2,1,2,  3,0,
+                    5,6,1,  2,1,6,  5,3,2,  1,0,
+                    5,5,6,  1,2,1,  6,5,3,  5,0,
+                    3,2,3,  5,6,5,  3,2,1,  2,1,2,
+                    3,5,6,  1,2,1,  6,5,3,  5,6,5,
+                    3,2,3,  5,6,5,  3,2,1,  2,1,2,
+                    3,5,6,  1,6,5,  3,2,1,  1,0
+                ]
+            ),
+            makeScore(
+                title: "光明行",
+                composer: "刘天华",
+                tempo: 120,
+                difficulty: .intermediate,
+                notes: [
+                    1,1,1,  3,3,3,  5,5,5,  6,6,6,
+                    1,1,1,  3,3,3,  5,5,5,  6,6,6,
+                    5,6,5,3,  2,3,2,1,  5,6,5,3,  2,3,2,1,
+                    2,1,2,3,  5,3,5,6,  1,6,1,2,  3,2,3,5,
+                    6,1,6,5,  6,1,6,5,  3,5,3,2,  3,5,3,2,
+                    1,2,1,6,  1,2,1,6,  5,6,5,3,  5,6,5,3,
+                    2,3,2,1,  2,3,2,1,  1,0
+                ]
+            ),
+            makeScore(
+                title: "月夜",
+                composer: "刘天华",
+                tempo: 70,
+                difficulty: .intermediate,
+                notes: [
+                    5,5,6,  1,2,3,  5,3,2,  1,6,5,
+                    3,5,6,  1,6,5,  3,2,3,  5,0,
+                    5,6,1,  2,3,2,  1,6,5,  3,0,
+                    2,3,5,  6,1,6,  5,3,2,  1,0,
+                    1,2,3,  5,6,5,  3,2,1,  6,0,
+                    5,6,1,  2,1,6,  5,3,2,  1,0,
+                    5,5,6,  1,2,3,  5,3,2,  1,6,5,
+                    3,5,6,  1,6,5,  3,2,1,  1,0
+                ]
+            ),
+
+            //—— Advanced ——
+            makeScore(
+                title: "二泉映月",
+                composer: "阿炳",
+                tempo: 60,
+                difficulty: .advanced,
+                notes: [
+                    6,5,6,  1,2,3,  5,6,5,  3,2,3,
+                    5,6,5,  3,2,1,  6,5,6,  1,0,
+                    2,3,5,  6,5,3,  2,3,2,  1,0,
+                    5,6,1,  2,3,2,  1,6,5,  3,0,
+                    6,5,6,  1,2,3,  5,6,5,  3,2,3,
+                    5,6,5,  3,2,1,  6,5,6,  1,0,
+                    2,3,5,  6,5,3,  2,3,2,  1,0,
+                    5,6,1,  2,3,2,  1,6,5,  3,0,
+                    6,5,6,  1,2,3,  5,6,5,  3,2,3,
+                    5,6,5,  3,2,1,  6,5,6,  1,0
+                ]
+            ),
+            makeScore(
+                title: "空山鸟语",
+                composer: "刘天华",
+                tempo: 90,
+                difficulty: .advanced,
+                notes: [
+                    1,2,3,  5,3,2,  1,2,3,  5,3,2,
+                    1,0,  1,2,3,  5,6,5,  3,2,1,
+                    3,5,3,  2,1,2,  3,5,3,  2,1,2,
+                    1,6,1,  2,3,2,  1,6,1,  2,3,2,
+                    5,3,5,  6,1,6,  5,3,5,  6,1,6,
+                    1,2,3,  5,6,5,  3,2,1,  2,3,2,
+                    1,6,1,  2,3,2,  1,6,1,  2,3,2,
+                    1,6,5,  3,2,1,  1,0
+                ]
+            ),
+            makeScore(
+                title: "江河水",
+                composer: "东北民间",
+                tempo: 50,
+                difficulty: .advanced,
+                notes: [
+                    1,1,  6,5,6,  1,2,3,  5,3,2,
+                    1,6,5,  6,1,6,  5,3,2,  1,0,
+                    3,5,6,  1,6,5,  3,2,3,  5,0,
+                    3,2,1,  6,5,6,  1,2,3,  5,3,2,
+                    1,6,5,  6,1,6,  5,3,2,  1,0,
+                    5,6,1,  2,3,2,  1,6,5,  3,0,
+                    6,5,6,  1,2,3,  5,6,5,  3,2,1,
+                    2,3,2,  1,6,5,  6,1,6,  5,3,2,
+                    1,6,5,  6,1,6,  5,3,2,  1,0
+                ]
+            ),
+            makeScore(
+                title: "三门峡畅想曲",
+                composer: "刘文金",
+                tempo: 130,
+                difficulty: .advanced,
+                notes: [
+                    5,6,1,  2,3,5,  6,1,2,  3,0,
+                    2,1,6,  5,3,2,  1,6,5,  3,0,
+                    5,6,1,  2,3,5,  6,1,2,  3,0,
+                    2,1,6,  5,3,2,  1,6,5,  3,0,
+                    6,5,3,  2,3,5,  6,5,3,  2,0,
+                    1,2,3,  5,3,2,  1,6,5,  6,0,
+                    5,6,1,  2,3,5,  6,1,2,  3,0,
+                    2,1,6,  5,3,2,  1,6,5,  3,0,
+                    5,6,1,  2,3,5,  6,1,2,  3,0,
+                    2,1,6,  5,3,2,  1,0
                 ]
             )
         ]
     }
 
-    private func makeScore(title: String, composer: String, tempo: Int, notes: [Int]) -> Score {
+    private func makeScore(title: String, composer: String, tempo: Int, difficulty: Difficulty, notes: [Int]) -> Score {
         var measures: [Measure] = []
         var currentNotes: [Note] = []
 
@@ -102,7 +288,6 @@ final class ScoreService {
                 currentNotes.append(Note(degree: value, duration: 1.0))
             }
 
-            // Every 4 notes form a measure in 4/4 time
             if currentNotes.count == 4 {
                 measures.append(Measure(notes: currentNotes))
                 currentNotes = []
@@ -117,6 +302,7 @@ final class ScoreService {
             title: title,
             composer: composer,
             tempo: tempo,
+            difficulty: difficulty,
             measures: measures
         )
     }

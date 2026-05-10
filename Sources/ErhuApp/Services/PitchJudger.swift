@@ -2,12 +2,13 @@ import Foundation
 
 /// Compares played notes against the score and evaluates accuracy
 final class PitchJudger {
-    struct Judgment {
+    struct Judgment: Codable {
         let note: Note
         let playedDegree: Int
         let playedOctave: Int
         let isCorrect: Bool
         let centsOff: Double // cents deviation (-50 to +50 = in tune)
+        let timestamp: TimeInterval // seconds since recording start
     }
 
     /// Tolerance in cents (±50 cents = 1 semitone / 2)
@@ -24,7 +25,8 @@ final class PitchJudger {
                 playedDegree: 0,
                 playedOctave: 0,
                 isCorrect: false,
-                centsOff: 0
+                centsOff: 0,
+                timestamp: 0
             )
         }
 
@@ -56,7 +58,8 @@ final class PitchJudger {
             playedDegree: degree,
             playedOctave: octave,
             isCorrect: isCorrect,
-            centsOff: cents
+            centsOff: cents,
+            timestamp: 0
         )
     }
 

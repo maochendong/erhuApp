@@ -17,11 +17,17 @@ struct ContentView: View {
                 }
                 .tag(1)
 
+            ProgressView()
+                .tabItem {
+                    Label("进度", systemImage: "chart.bar")
+                }
+                .tag(2)
+
             SettingsView()
                 .tabItem {
                     Label("设置", systemImage: "gearshape")
                 }
-                .tag(2)
+                .tag(3)
         }
     }
 }

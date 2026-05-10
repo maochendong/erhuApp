@@ -29,6 +29,8 @@ enum Difficulty: String, Codable, CaseIterable {
     case intermediate = "中级"
     case advanced = "高级"
 
+    var label: String { rawValue }
+
     var color: String {
         switch self {
         case .beginner: return "green"
