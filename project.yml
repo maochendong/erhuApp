@@ -11,13 +11,26 @@ settings:
     SUPPORTED_PLATFORMS: "iphoneos iphonesimulator"
     SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD: YES
   configs:
-    debug:
+    Debug:
       CODE_SIGN_IDENTITY: ""
       CODE_SIGNING_REQUIRED: NO
       CODE_SIGNING_ALLOWED: NO
-    release:
+    Release:
       CODE_SIGN_IDENTITY: ""
       CODE_SIGNING_REQUIRED: NO
+schemes:
+  ErhuApp:
+    build:
+      targets:
+        ErhuApp: all
+    run:
+      config: Debug
+    profile:
+      config: Release
+    analyze:
+      config: Debug
+    archive:
+      config: Release
 targets:
   ErhuApp:
     type: application
@@ -33,7 +46,7 @@ targets:
     info:
       path: Sources/ErhuApp/Info.plist
       properties:
-        CFBundleDisplayName: 二胡识谱
+        CFBundleDisplayName: 盼盼学二胡
         CFBundleDevelopmentRegion: zh_CN
         CFBundleExecutable: $(EXECUTABLE_NAME)
         CFBundleIdentifier: com.erhu.app
@@ -55,4 +68,6 @@ targets:
           - UIInterfaceOrientationPortrait
           - UIInterfaceOrientationLandscapeLeft
           - UIInterfaceOrientationLandscapeRight
-        NSMicrophoneUsageDescription: 二胡识谱需要使用麦克风来检测您的演奏音高，以便判断音准是否正确。
+        UIApplicationSceneManifest:
+          UIApplicationSupportsMultipleScenes: false
+        NSMicrophoneUsageDescription: 盼盼学二胡需要使用麦克风来检测您的演奏音高，以便判断音准是否正确。

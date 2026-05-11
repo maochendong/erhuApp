@@ -24,6 +24,7 @@ enum FollowerState: Equatable {
 }
 
 struct PracticeView: View {
+    @Binding var pendingScore: Score?
     @State private var audioEngine = AudioEngine()
     @State private var currentScore: Score?
     @State private var currentNoteIndex = 0
@@ -58,6 +59,18 @@ struct PracticeView: View {
     // MARK: - Check-in toast
     @State private var showCheckInToast = false
 
+    // MARK: - Live judgment (wrong-note display)
+    @State private var lastAttemptJudgment: PitchJudger.Judgment?
+
+    // MARK: - Preview playback
+    @State private var notePlayer = NotePlayer()
+    @State private var isPreviewing = false
+    @State private var previewPaused = false
+    @State private var previewTask: Task<Void, Never>?
+
+    // MARK: - Full-screen score display
+    @State private var isScoreFullScreen = false
+
     private let metronome = Metronome()
 
     let judger = PitchJudger()
@@ -71,32 +84,39 @@ struct PracticeView: View {
             VStack(spacing: 0) {
                 if let score = currentScore {
                     // Score follower state indicator
-                    HStack {
-                        Circle()
-                            .fill(followerState.color)
-                            .frame(width: 10, height: 10)
-                        Text(followerState.label)
-                            .font(.caption)
-                            .foregroundStyle(followerState.color)
-                        Spacer()
-                        Text("音符 \(currentNoteIndex + 1) / \(score.allNotes.count)")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
+                    if !isPreviewing {
+                        HStack {
+                            Circle()
+                                .fill(followerState.color)
+                                .frame(width: 10, height: 10)
+                            Text(followerState.label)
+                                .font(.caption)
+                                .foregroundStyle(followerState.color)
+                            Spacer()
+                            Text("音符 \(currentNoteIndex + 1) / \(score.allNotes.count)")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                        .padding(.horizontal)
+                        .padding(.top, 8)
                     }
-                    .padding(.horizontal)
-                    .padding(.top, 8)
 
                     ScoreView(
                         score: score,
                         currentNoteIndex: currentNoteIndex,
                         judgments: judgments,
+                        lastAttemptJudgment: lastAttemptJudgment,
                         loopStartIndex: loopStartIndex,
                         loopEndIndex: loopEndIndex,
-                        onLongPressNote: { idx in handleLongPressNote(idx, score: score) }
+                        onLongPressNote: { idx in handleLongPressNote(idx, score: score) },
+                        onTapNote: { note in notePlayer.play(note: note) },
+                        isFullScreen: isScoreFullScreen,
+                        onToggleFullScreen: { isScoreFullScreen.toggle() }
                     )
                     .padding(.top, 4)
+                    .layoutPriority(isScoreFullScreen ? 1 : 0)
 
-                    if !judgments.isEmpty {
+                    if !isPreviewing, !judgments.isEmpty {
                         let result = PitchJudger.PerformanceResult(
                             score: score,
                             judgments: judgments
@@ -110,7 +130,7 @@ struct PracticeView: View {
                     }
 
                     // Loop controls
-                    if isPlaying || loopStartIndex != nil || loopEndIndex != nil {
+                    if !isPreviewing, isPlaying || loopStartIndex != nil || loopEndIndex != nil {
                         VStack(spacing: 4) {
                             if let start = loopStartIndex, let end = loopEndIndex, loopActive {
                                 HStack {
@@ -197,7 +217,48 @@ struct PracticeView: View {
 
                     Spacer()
 
-                    VStack(spacing: 16) {
+                    // Preview action bar
+                    if isPreviewing {
+                        HStack(spacing: 20) {
+                            Button {
+                                previewPaused.toggle()
+                                if previewPaused {
+                                    notePlayer.stop()
+                                    metronome.stop()
+                                } else {
+                                    if metronomeEnabled {
+                                        metronome.setTempo(Int(tempo))
+                                    }
+                                }
+                            } label: {
+                                Label(previewPaused ? "继续" : "暂停",
+                                      systemImage: previewPaused ? "play.circle.fill" : "pause.circle.fill")
+                                    .font(.title2)
+                                    .frame(maxWidth: .infinity)
+                                    .padding()
+                                    .background(Color.orange)
+                                    .foregroundStyle(.white)
+                                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                            }
+
+                            Button {
+                                cancelPreview()
+                                metronome.stop()
+                            } label: {
+                                Label("结束", systemImage: "stop.circle.fill")
+                                    .font(.title2)
+                                    .frame(maxWidth: .infinity)
+                                    .padding()
+                                    .background(.red)
+                                    .foregroundStyle(.white)
+                                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                            }
+                        }
+                        .padding(.horizontal)
+                        .padding(.bottom, 24)
+                        .transition(.move(edge: .bottom).combined(with: .opacity))
+                    } else {
+                        VStack(spacing: 16) {
                         if audioEngine.isListening {
                             HStack(spacing: 20) {
                                 VStack {
@@ -250,7 +311,7 @@ struct PracticeView: View {
                                     .foregroundStyle(.white)
                                     .clipShape(RoundedRectangle(cornerRadius: 12))
                             }
-                            .disabled(currentScore == nil)
+                            .disabled(currentScore == nil || isPreviewing)
 
                             Button("重置") {
                                 resetPerformance()
@@ -265,6 +326,7 @@ struct PracticeView: View {
                         .padding(.horizontal)
                     }
                     .padding(.bottom, 24)
+                    }
                 } else {
                     ContentUnavailableView(
                         "选择一首曲子",
@@ -274,20 +336,57 @@ struct PracticeView: View {
                 }
             }
             .navigationTitle("练习")
+            .onChange(of: pendingScore) { _, score in
+                if let score {
+                    startNewScore(score)
+                    pendingScore = nil
+                }
+            }
             .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    if currentScore != nil {
-                        Button("选择曲目") {
-                            showScoreLibrary = true
+                if isPreviewing {
+                    ToolbarItem(placement: .topBarLeading) {
+                        Button(previewPaused ? "继续" : "暂停") {
+                            previewPaused.toggle()
+                            if previewPaused {
+                                notePlayer.stop()
+                                metronome.stop()
+                            } else {
+                                if metronomeEnabled {
+                                    metronome.setTempo(Int(tempo))
+                                }
+                            }
                         }
                     }
-                }
-                ToolbarItem(placement: .topBarLeading) {
-                    if currentScore != nil {
-                        Button {
-                            showRecordings = true
-                        } label: {
-                            Image(systemName: "list.bullet.rectangle")
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button("结束") {
+                            cancelPreview()
+                            metronome.stop()
+                        }
+                    }
+                } else {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        if currentScore != nil {
+                            HStack(spacing: 8) {
+                                Button {
+                                    startPreview()
+                                } label: {
+                                    Label("试听", systemImage: "headphones")
+                                }
+                                .disabled(isPlaying)
+
+                                Button("选择曲目") {
+                                    showScoreLibrary = true
+                                }
+                            }
+                        }
+                    }
+                    ToolbarItem(placement: .topBarLeading) {
+                        if currentScore != nil {
+                            Button {
+                                showRecordings = true
+                            } label: {
+                                Image(systemName: "list.bullet.rectangle")
+                            }
                         }
                     }
                 }
@@ -365,6 +464,7 @@ struct PracticeView: View {
         followerState = .idle
         silenceStartTime = nil
         matchStartTime = nil
+        lastAttemptJudgment = nil
         audioEngine.stop()
         showScoreLibrary = false
         showSummary = false
@@ -373,6 +473,11 @@ struct PracticeView: View {
     private func togglePlay() {
         isPlaying.toggle()
         if isPlaying {
+            // Clear previous practice session colors
+            judgments = []
+            lastAttemptJudgment = nil
+            isScoreFullScreen = true
+
             let firstToday = NotificationManager.shared.isFirstPracticeToday
             if firstToday {
                 showCheckInToast = true
@@ -396,6 +501,8 @@ struct PracticeView: View {
             followerState = .idle
             silenceStartTime = nil
             matchStartTime = nil
+            // isScoreFullScreen kept true, judgments preserved so colors stay visible
+            // lastAttemptJudgment intentionally preserved so wrong notes stay red after stop
         }
     }
 
@@ -406,6 +513,9 @@ struct PracticeView: View {
         followerState = .idle
         silenceStartTime = nil
         matchStartTime = nil
+        lastAttemptJudgment = nil
+        isScoreFullScreen = false
+        cancelPreview()
         clearLoop()
         metronome.stop()
         audioEngine.stop()
@@ -441,6 +551,63 @@ struct PracticeView: View {
         loopActive = false
         loopCount = 0
         loopRemaining = 0
+    }
+
+    // MARK: - Preview Playback
+
+    private func startPreview() {
+        guard let score = currentScore else { return }
+        isPreviewing = true
+        previewPaused = false
+        currentNoteIndex = 0
+        judgments = []
+        lastAttemptJudgment = nil
+
+        let beatDuration = 60.0 / Double(score.tempo)
+
+        previewTask = Task {
+            for (idx, note) in score.allNotes.enumerated() {
+                // Check for cancellation
+                if Task.isCancelled || !isPreviewing { break }
+
+                // Handle pause
+                while previewPaused && isPreviewing {
+                    try? await Task.sleep(nanoseconds: 100_000_000) // 0.1s
+                    if Task.isCancelled || !isPreviewing { return }
+                }
+
+                await MainActor.run {
+                    currentNoteIndex = idx
+                }
+
+                if note.isRest {
+                    let restDuration = max(note.duration * beatDuration, 0.3)
+                    try? await Task.sleep(nanoseconds: UInt64(restDuration * 1_000_000_000))
+                } else {
+                    let playDuration = max(note.duration * beatDuration * 0.7, 0.2)
+                    let gap = max(note.duration * beatDuration * 0.3, 0.05)
+                    notePlayer.play(note: note, duration: playDuration)
+                    try? await Task.sleep(nanoseconds: UInt64((playDuration + gap) * 1_000_000_000))
+                }
+            }
+
+            // Preview finished
+            await MainActor.run {
+                isPreviewing = false
+                previewPaused = false
+                notePlayer.stop()
+                currentNoteIndex = 0
+            }
+        }
+    }
+
+    private func cancelPreview() {
+        previewTask?.cancel()
+        previewTask = nil
+        isPreviewing = false
+        previewPaused = false
+        notePlayer.stop()
+        currentNoteIndex = 0
     }
 
     // MARK: - Score Following
@@ -526,6 +693,7 @@ struct PracticeView: View {
         let isMatch = isCorrectDegree && isInTune
 
         if isMatch {
+            lastAttemptJudgment = nil // Clear live wrong-note feedback
             followerState = .listening
             if matchStartTime == nil {
                 matchStartTime = Date()
@@ -548,6 +716,10 @@ struct PracticeView: View {
                 matchStartTime = nil
             }
         } else {
+            // Store the wrong attempt for real-time red display on current note
+            if !isSilent {
+                lastAttemptJudgment = judgment
+            }
             followerState = .listening // Still listening, just not matched yet
             matchStartTime = nil
         }
@@ -573,5 +745,5 @@ struct PracticeView: View {
 }
 
 #Preview {
-    PracticeView()
+    PracticeView(pendingScore: .constant(nil))
 }

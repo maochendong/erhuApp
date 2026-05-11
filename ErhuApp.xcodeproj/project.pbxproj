@@ -17,6 +17,7 @@
 		806492612B391BAE64EB7A64 /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6276B47EA2D075C6A53002E8 /* NotificationManager.swift */; };
 		863FC8B585F24D10CCD902EA /* PerformanceSummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFA99EEAB9BA56BE8BC9B12D /* PerformanceSummaryView.swift */; };
 		86AF87BDD67B4A51D592C5AE /* Score.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4FC65F7E0A8DFF45906303E /* Score.swift */; };
+		9D7034EE662B8AF132FE66C8 /* NotePlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81E0CD2E36BEEE1FEB8C4A55 /* NotePlayer.swift */; };
 		A1896241E9BB3C2B4520F9B0 /* PracticeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39790F319D15AA28D3DBF877 /* PracticeView.swift */; };
 		A39658C087BCCD690E45EA9C /* ScoreEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96FF9D4979396F7AAAF356AC /* ScoreEditorView.swift */; };
 		B0E9C65D18E1A967EE76D329 /* ScoreView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A778DF74E294720D744F108 /* ScoreView.swift */; };
@@ -48,6 +49,7 @@
 		6921955CC7AB8D33073A0426 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		798ECBA606F5780E8412766B /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		7FEB17CC7128B07A3D629958 /* ErhuApp.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = ErhuApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		81E0CD2E36BEEE1FEB8C4A55 /* NotePlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotePlayer.swift; sourceTree = "<group>"; };
 		858369943CE752BA636425A2 /* PitchJudger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PitchJudger.swift; sourceTree = "<group>"; };
 		96FF9D4979396F7AAAF356AC /* ScoreEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoreEditorView.swift; sourceTree = "<group>"; };
 		9816CC3A5541697C9C399860 /* ErhuApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErhuApp.swift; sourceTree = "<group>"; };
@@ -130,6 +132,7 @@
 			children = (
 				E5D023B499C112DFA02520D4 /* AudioEngine.swift */,
 				479E35202A39A9495E2E39AF /* Metronome.swift */,
+				81E0CD2E36BEEE1FEB8C4A55 /* NotePlayer.swift */,
 			);
 			path = Audio;
 			sourceTree = "<group>";
@@ -147,7 +150,7 @@
 			path = Services;
 			sourceTree = "<group>";
 		};
-		"TEMP_8FD90C8C-B7C8-4C21-B0B7-DCE651B3AE18" /* Resources */ = {
+		"TEMP_F12B083B-4E48-48B0-AEE5-5A039652675A" /* Resources */ = {
 			isa = PBXGroup;
 			children = (
 			);
@@ -213,6 +216,7 @@
 				669DD292CDDD114E925627C9 /* Metronome.swift in Sources */,
 				7671ED1E882209FF03C915A4 /* Note.swift in Sources */,
 				2CAECD5D1C246195B1766B4F /* NoteDetailEntity.swift in Sources */,
+				9D7034EE662B8AF132FE66C8 /* NotePlayer.swift in Sources */,
 				806492612B391BAE64EB7A64 /* NotificationManager.swift in Sources */,
 				FED4FD3967C9FE3EE04B100A /* OnboardingView.swift in Sources */,
 				863FC8B585F24D10CCD902EA /* PerformanceSummaryView.swift in Sources */,

@@ -4,9 +4,13 @@ struct ScoreView: View {
     let score: Score
     let currentNoteIndex: Int
     let judgments: [PitchJudger.Judgment]
+    let lastAttemptJudgment: PitchJudger.Judgment?
     let loopStartIndex: Int?
     let loopEndIndex: Int?
     let onLongPressNote: ((Int) -> Void)?
+    let onTapNote: ((Note) -> Void)?
+    let isFullScreen: Bool
+    let onToggleFullScreen: (() -> Void)?
 
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     private var isRegularWidth: Bool { horizontalSizeClass == .regular }
@@ -15,16 +19,24 @@ struct ScoreView: View {
         score: Score,
         currentNoteIndex: Int,
         judgments: [PitchJudger.Judgment],
+        lastAttemptJudgment: PitchJudger.Judgment? = nil,
         loopStartIndex: Int? = nil,
         loopEndIndex: Int? = nil,
-        onLongPressNote: ((Int) -> Void)? = nil
+        onLongPressNote: ((Int) -> Void)? = nil,
+        onTapNote: ((Note) -> Void)? = nil,
+        isFullScreen: Bool = false,
+        onToggleFullScreen: (() -> Void)? = nil
     ) {
         self.score = score
         self.currentNoteIndex = currentNoteIndex
         self.judgments = judgments
+        self.lastAttemptJudgment = lastAttemptJudgment
         self.loopStartIndex = loopStartIndex
         self.loopEndIndex = loopEndIndex
         self.onLongPressNote = onLongPressNote
+        self.onTapNote = onTapNote
+        self.isFullScreen = isFullScreen
+        self.onToggleFullScreen = onToggleFullScreen
     }
 
     var body: some View {
@@ -54,33 +66,42 @@ struct ScoreView: View {
 
             Divider()
 
-            // Score staff (jianpu)
-            ScrollView(.horizontal, showsIndicators: false) {
-                if isRegularWidth {
-                    // Two-column grid layout for iPad/landscape
-                    LazyVGrid(columns: [
-                        GridItem(.flexible(), spacing: 12),
-                        GridItem(.flexible(), spacing: 12)
-                    ], spacing: 8) {
-                        ForEach(Array(score.measures.enumerated()), id: \.element.id) { measureIdx, measure in
-                            measureView(measureIdx: measureIdx, measure: measure)
+            // Score staff (jianpu) with full-screen support
+            ScrollViewReader { proxy in
+                ZStack(alignment: .topTrailing) {
+                    Group {
+                        if isFullScreen {
+                            ScrollView(.vertical) {
+                                innerScoreContent
+                            }
+                        } else {
+                            innerScoreContent
                         }
                     }
-                    .padding()
-                    .frame(minWidth: 400)
-                } else {
-                    VStack(alignment: .leading, spacing: 8) {
-                        ForEach(Array(score.measures.enumerated()), id: \.element.id) { measureIdx, measure in
-                            measureView(measureIdx: measureIdx, measure: measure)
-                        }
+                    .frame(maxWidth: .infinity, minHeight: isFullScreen ? 300 : 120)
+                    .background(Color(.systemGray6))
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
+
+                    // Full-screen toggle button
+                    Button {
+                        onToggleFullScreen?()
+                    } label: {
+                        Image(systemName: isFullScreen ? "arrow.down.right.and.arrow.up.left" : "arrow.up.left.and.arrow.down.right")
+                            .font(.caption)
+                            .padding(6)
+                            .background(.ultraThinMaterial)
+                            .clipShape(Circle())
                     }
-                    .padding()
+                    .padding(8)
+                }
+                .padding(.horizontal)
+                .onChange(of: currentNoteIndex) { _, _ in
+                    let measureIdx = measureIndex(for: currentNoteIndex)
+                    withAnimation {
+                        proxy.scrollTo("m\(measureIdx)", anchor: .leading)
+                    }
                 }
             }
-            .frame(maxWidth: .infinity, minHeight: 120)
-            .background(Color(.systemGray6))
-            .clipShape(RoundedRectangle(cornerRadius: 8))
-            .padding(.horizontal)
         }
     }
 
@@ -101,11 +122,11 @@ struct ScoreView: View {
                     note: note,
                     isCurrent: isCurrent,
                     judgment: judgment,
+                    lastAttempt: isCurrent ? lastAttemptJudgment : nil,
                     isInLoop: isInLoop,
                     isLoopEnd: globalIdx == loopEndIndex,
-                    onLongPress: {
-                        onLongPressNote?(globalIdx)
-                    }
+                    onLongPress: { onLongPressNote?(globalIdx) },
+                    onTap: { onTapNote?(note) }
                 )
             }
         }
@@ -115,9 +136,45 @@ struct ScoreView: View {
         score.measures[0..<measureIdx].reduce(0) { $0 + $1.notes.count }
     }
 
+    private func measureIndex(for globalNoteIndex: Int) -> Int {
+        var count = 0
+        for (idx, m) in score.measures.enumerated() {
+            count += m.notes.count
+            if globalNoteIndex < count { return idx }
+        }
+        return score.measures.count - 1
+    }
+
     private func isLoopNote(_ idx: Int) -> Bool {
         guard let start = loopStartIndex, let end = loopEndIndex else { return false }
         return idx >= start && idx <= end
+    }
+
+    @ViewBuilder
+    private var innerScoreContent: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            if isRegularWidth {
+                LazyVGrid(columns: [
+                    GridItem(.flexible(), spacing: 12),
+                    GridItem(.flexible(), spacing: 12)
+                ], spacing: 8) {
+                    ForEach(Array(score.measures.enumerated()), id: \.element.id) { measureIdx, measure in
+                        measureView(measureIdx: measureIdx, measure: measure)
+                            .id("m\(measureIdx)")
+                    }
+                }
+                .padding()
+                .frame(minWidth: 400)
+            } else {
+                VStack(alignment: .leading, spacing: 8) {
+                    ForEach(Array(score.measures.enumerated()), id: \.element.id) { measureIdx, measure in
+                        measureView(measureIdx: measureIdx, measure: measure)
+                            .id("m\(measureIdx)")
+                    }
+                }
+                .padding()
+            }
+        }
     }
 }
 
@@ -125,24 +182,35 @@ struct NoteCell: View {
     let note: Note
     let isCurrent: Bool
     let judgment: PitchJudger.Judgment?
+    let lastAttempt: PitchJudger.Judgment?
     let isInLoop: Bool
     let isLoopEnd: Bool
     let onLongPress: (() -> Void)?
+    let onTap: (() -> Void)?
 
     init(
         note: Note,
         isCurrent: Bool,
         judgment: PitchJudger.Judgment?,
+        lastAttempt: PitchJudger.Judgment? = nil,
         isInLoop: Bool = false,
         isLoopEnd: Bool = false,
-        onLongPress: (() -> Void)? = nil
+        onLongPress: (() -> Void)? = nil,
+        onTap: (() -> Void)? = nil
     ) {
         self.note = note
         self.isCurrent = isCurrent
         self.judgment = judgment
+        self.lastAttempt = lastAttempt
         self.isInLoop = isInLoop
         self.isLoopEnd = isLoopEnd
         self.onLongPress = onLongPress
+        self.onTap = onTap
+    }
+
+    /// The effective judgment: completed judgment or live attempt
+    private var effectiveJudgment: PitchJudger.Judgment? {
+        lastAttempt ?? judgment
     }
 
     var body: some View {
@@ -155,7 +223,7 @@ struct NoteCell: View {
             }
 
             // Arrow indicator for pitch deviation (sharp/flat)
-            if let j = judgment, !j.isCorrect, !note.isRest {
+            if let j = effectiveJudgment, !j.isCorrect, !note.isRest {
                 pitchDeviationArrow(cents: j.centsOff)
             }
 
@@ -194,7 +262,7 @@ struct NoteCell: View {
             }
 
             // Cents deviation display for current or judged notes
-            if let j = judgment, !note.isRest {
+            if let j = effectiveJudgment, !note.isRest {
                 Text(String(format: "%+.0f¢", j.centsOff))
                     .font(.system(size: 10))
                     .foregroundStyle(centsColor(cents: j.centsOff))
@@ -203,7 +271,7 @@ struct NoteCell: View {
             }
 
             // Frequency display for current note
-            if isCurrent, let j = judgment {
+            if isCurrent, let j = effectiveJudgment {
                 Text(String(format: "%.0f Hz", note.frequency))
                     .font(.system(size: 9))
                     .foregroundStyle(.secondary)
@@ -218,9 +286,12 @@ struct NoteCell: View {
                 .stroke(borderColor, lineWidth: isLoopEnd ? 2 : 1)
         )
         .animation(.easeInOut(duration: 0.3), value: isCurrent)
-        .animation(.easeInOut(duration: 0.3), value: judgment != nil)
+        .animation(.easeInOut(duration: 0.3), value: effectiveJudgment != nil)
         .onLongPressGesture(minimumDuration: 0.5) {
             onLongPress?()
+        }
+        .onTapGesture {
+            onTap?()
         }
     }
 
@@ -241,14 +312,13 @@ struct NoteCell: View {
     }
 
     private var backgroundColor: Color {
-        // Show loop region orange background when active and not overridden by judgment/current
-        if isInLoop && judgment == nil && !isCurrent {
+        if isInLoop && effectiveJudgment == nil && !isCurrent {
             return .orange.opacity(0.12)
         }
         if note.isRest {
             return isCurrent ? Color.accentColor.opacity(0.2) : Color.clear
         }
-        guard let j = judgment else {
+        guard let j = effectiveJudgment else {
             return isCurrent ? Color.accentColor.opacity(0.2) : Color.clear
         }
         if j.isCorrect { return .green.opacity(0.15) }
@@ -263,7 +333,7 @@ struct NoteCell: View {
     }
 
     private var noteColor: Color {
-        guard let j = judgment else {
+        guard let j = effectiveJudgment else {
             return note.isRest ? .secondary : .primary
         }
         if j.isCorrect { return .green }

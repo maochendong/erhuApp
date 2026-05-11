@@ -1,7 +1,7 @@
 import Foundation
 
 /// Represents a complete musical score (jianpu format)
-struct Score: Identifiable, Codable {
+struct Score: Identifiable, Codable, Equatable {
     let id: UUID
     var title: String
     var composer: String
@@ -54,7 +54,7 @@ struct Score: Identifiable, Codable {
 }
 
 /// A single measure containing notes
-struct Measure: Identifiable, Codable {
+struct Measure: Identifiable, Codable, Equatable {
     let id: UUID
     var notes: [Note]
 
