@@ -29,8 +29,30 @@ final class AudioEngine {
     private let stabilityCentsThreshold: Double = 50.0
 
     func start() {
+        // Configure audio session
+        do {
+            let session = AVAudioSession.sharedInstance()
+            try session.setCategory(.playAndRecord, mode: .default)
+            try session.setActive(true)
+        } catch {
+            print("AudioSession setup failed: \(error)")
+        }
+
         let input = engine.inputNode
-        let format = input.inputFormat(forBus: 0)
+        let inputFormat = input.inputFormat(forBus: 0)
+
+        // Fallback to standard format if input format is invalid (e.g. on simulator)
+        let format: AVAudioFormat
+        if inputFormat.sampleRate == 0 {
+            format = AVAudioFormat(standardFormatWithSampleRate: sampleRate, channels: 1)!
+        } else {
+            format = inputFormat
+        }
+
+        // Ensure output node is properly connected
+        if engine.outputNode.inputFormat(forBus: 0).sampleRate == 0 {
+            engine.connect(engine.mainMixerNode, to: engine.outputNode, format: format)
+        }
 
         input.installTap(onBus: 0, bufferSize: AVAudioFrameCount(bufferSize), format: format) { [weak self] buffer, _ in
             self?.processBuffer(buffer)

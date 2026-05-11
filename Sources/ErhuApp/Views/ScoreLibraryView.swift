@@ -179,59 +179,62 @@ struct ScoreLibraryView: View {
     }
 
     private func scoreRow(_ score: Score) -> some View {
-        Button {
-            if let handler = onSelect {
-                handler(score)
-            } else {
-                selectedScore = score
-            }
-        } label: {
-            HStack {
-                VStack(alignment: .leading, spacing: 2) {
-                    HStack {
-                        Text(score.title)
-                            .font(.headline)
-                        if score.isCustom {
-                            Text("自定义")
-                                .font(.caption2)
-                                .padding(.horizontal, 6)
-                                .padding(.vertical, 2)
-                                .background(Color.accentColor.opacity(0.15))
-                                .foregroundStyle(Color.accentColor)
-                                .clipShape(Capsule())
-                        }
-                        Text(score.difficulty.label)
+        HStack {
+            VStack(alignment: .leading, spacing: 2) {
+                HStack {
+                    Text(score.title)
+                        .font(.headline)
+                    if score.isCustom {
+                        Text("自定义")
                             .font(.caption2)
                             .padding(.horizontal, 6)
                             .padding(.vertical, 2)
-                            .background(difficultyColor(score.difficulty).opacity(0.15))
-                            .foregroundStyle(difficultyColor(score.difficulty))
+                            .background(Color.accentColor.opacity(0.15))
+                            .foregroundStyle(Color.accentColor)
                             .clipShape(Capsule())
                     }
-                    HStack {
-                        Text(score.composer)
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                        Text("\(score.tempo) BPM")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
+                    Text(score.difficulty.label)
+                        .font(.caption2)
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 2)
+                        .background(difficultyColor(score.difficulty).opacity(0.15))
+                        .foregroundStyle(difficultyColor(score.difficulty))
+                        .clipShape(Capsule())
                 }
-                Spacer()
-                VStack(alignment: .trailing, spacing: 4) {
-                    if score.isFavorite {
-                        Image(systemName: "heart.fill")
-                            .foregroundStyle(.red)
-                            .font(.caption)
-                    }
-                    Text("\(score.measures.count) 小节")
+                HStack {
+                    Text(score.composer)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                    Text("\(score.tempo) BPM")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
             }
-            .contentShape(Rectangle())
+
+            Spacer()
+
+            HStack(spacing: 6) {
+                Button("查看") {
+                    selectedScore = score
+                }
+                .buttonStyle(.bordered)
+                .controlSize(.small)
+
+                Button("练习") {
+                    onSelect?(score)
+                }
+                .buttonStyle(.borderedProminent)
+                .controlSize(.small)
+            }
+
+            if score.isFavorite {
+                Image(systemName: "heart.fill")
+                    .foregroundStyle(.red)
+                    .font(.caption)
+                    .padding(.leading, 4)
+            }
         }
-        .buttonStyle(.plain)
+        .padding(.vertical, 4)
         .swipeActions(edge: .trailing) {
             if score.isCustom {
                 Button(role: .destructive) {
@@ -262,60 +265,66 @@ struct ScoreLibraryView: View {
 
     /// Card-style score display for iPad grid layout
     private func scoreCard(_ score: Score) -> some View {
-        Button {
-            if let handler = onSelect {
-                handler(score)
-            } else {
-                selectedScore = score
-            }
-        } label: {
-            VStack(alignment: .leading, spacing: 8) {
-                HStack {
-                    Text(score.title)
-                        .font(.headline)
-                        .lineLimit(1)
-                    Spacer()
-                    if score.isFavorite {
-                        Image(systemName: "heart.fill")
-                            .foregroundStyle(.red)
-                            .font(.caption)
-                    }
-                }
-
-                Text(score.composer)
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
+        VStack(alignment: .leading, spacing: 8) {
+            HStack {
+                Text(score.title)
+                    .font(.headline)
                     .lineLimit(1)
-
-                HStack(spacing: 8) {
-                    Text(score.difficulty.label)
-                        .font(.caption2)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 3)
-                        .background(difficultyColor(score.difficulty).opacity(0.15))
-                        .foregroundStyle(difficultyColor(score.difficulty))
-                        .clipShape(Capsule())
-
-                    Spacer()
-
-                    Text("\(score.tempo) BPM")
-                        .font(.caption2)
-                        .foregroundStyle(.secondary)
+                Spacer()
+                if score.isFavorite {
+                    Image(systemName: "heart.fill")
+                        .foregroundStyle(.red)
+                        .font(.caption)
                 }
+            }
 
-                Text("\(score.measures.count) 小节 · \(score.allNotes.count) 音符")
+            Text(score.composer)
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+                .lineLimit(1)
+
+            HStack(spacing: 8) {
+                Text(score.difficulty.label)
+                    .font(.caption2)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(difficultyColor(score.difficulty).opacity(0.15))
+                    .foregroundStyle(difficultyColor(score.difficulty))
+                    .clipShape(Capsule())
+
+                Spacer()
+
+                Text("\(score.tempo) BPM")
                     .font(.caption2)
                     .foregroundStyle(.secondary)
             }
-            .padding(12)
-            .background(Color(.systemGray6))
-            .clipShape(RoundedRectangle(cornerRadius: 12))
-            .overlay(
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(difficultyColor(score.difficulty).opacity(0.3), lineWidth: 1)
-            )
+
+            Text("\(score.measures.count) 小节 · \(score.allNotes.count) 音符")
+                .font(.caption2)
+                .foregroundStyle(.secondary)
+
+            HStack(spacing: 8) {
+                Spacer()
+                Button("查看") {
+                    selectedScore = score
+                }
+                .buttonStyle(.bordered)
+                .controlSize(.small)
+
+                Button("练习") {
+                    onSelect?(score)
+                }
+                .buttonStyle(.borderedProminent)
+                .controlSize(.small)
+            }
         }
-        .buttonStyle(.plain)
+        .padding(12)
+        .background(Color(.systemGray6))
+        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .overlay(
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(difficultyColor(score.difficulty).opacity(0.3), lineWidth: 1)
+        )
     }
 
     private func difficultyColor(_ difficulty: Difficulty) -> Color {

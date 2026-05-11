@@ -25,6 +25,7 @@
 		CCE9B10DF2671F98AB2D835B /* ScoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CBAD604C4880C862FBEB150 /* ScoreService.swift */; };
 		D0338273039078CC72816060 /* JianpuParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45EE43319B0F2B5F075FE30F /* JianpuParser.swift */; };
 		E16151B95108A0D56FE9D064 /* ScoreLibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABDBA1E6BDF6BCA22F1BA515 /* ScoreLibraryView.swift */; };
+		E3C49EEBCE5F25C78F5E7FC3 /* JianpuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F26E90632A08C1F0B1DF0AE8 /* JianpuView.swift */; };
 		E52540440621FC6D1FE93D4F /* AudioEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5D023B499C112DFA02520D4 /* AudioEngine.swift */; };
 		E7AA2B1BE57E1C9FA6B5BDFC /* PlaybackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05478898157D126ECC327600 /* PlaybackView.swift */; };
 		E9E57AC166A8AD1EE9D042EE /* PracticeRecordEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = A302F81489E3FF4767E7B960 /* PracticeRecordEntity.swift */; };
@@ -63,6 +64,7 @@
 		DFA99EEAB9BA56BE8BC9B12D /* PerformanceSummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerformanceSummaryView.swift; sourceTree = "<group>"; };
 		E5D023B499C112DFA02520D4 /* AudioEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioEngine.swift; sourceTree = "<group>"; };
 		F252D745A0A135C8B9EEBC8D /* RecordingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingService.swift; sourceTree = "<group>"; };
+		F26E90632A08C1F0B1DF0AE8 /* JianpuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JianpuView.swift; sourceTree = "<group>"; };
 		FC4C1BBC21EE009EFF925E0E /* PersistenceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -105,6 +107,7 @@
 			isa = PBXGroup;
 			children = (
 				C4C4A5D83AEB8885507651E7 /* ContentView.swift */,
+				F26E90632A08C1F0B1DF0AE8 /* JianpuView.swift */,
 				798ECBA606F5780E8412766B /* OnboardingView.swift */,
 				DFA99EEAB9BA56BE8BC9B12D /* PerformanceSummaryView.swift */,
 				05478898157D126ECC327600 /* PlaybackView.swift */,
@@ -150,7 +153,7 @@
 			path = Services;
 			sourceTree = "<group>";
 		};
-		"TEMP_F12B083B-4E48-48B0-AEE5-5A039652675A" /* Resources */ = {
+		"TEMP_45612E6C-6A0C-4B83-A6FD-ED60F337D86B" /* Resources */ = {
 			isa = PBXGroup;
 			children = (
 			);
@@ -212,6 +215,7 @@
 				0BF8BD012529F0241A3FF4DF /* ContentView.swift in Sources */,
 				72A800D80362CDD67C1845E2 /* ErhuApp.swift in Sources */,
 				D0338273039078CC72816060 /* JianpuParser.swift in Sources */,
+				E3C49EEBCE5F25C78F5E7FC3 /* JianpuView.swift in Sources */,
 				F6611F9F57C8BA161B210A50 /* Lesson.swift in Sources */,
 				669DD292CDDD114E925627C9 /* Metronome.swift in Sources */,
 				7671ED1E882209FF03C915A4 /* Note.swift in Sources */,

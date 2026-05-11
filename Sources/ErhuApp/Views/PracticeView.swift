@@ -106,9 +106,6 @@ struct PracticeView: View {
                         currentNoteIndex: currentNoteIndex,
                         judgments: judgments,
                         lastAttemptJudgment: lastAttemptJudgment,
-                        loopStartIndex: loopStartIndex,
-                        loopEndIndex: loopEndIndex,
-                        onLongPressNote: { idx in handleLongPressNote(idx, score: score) },
                         onTapNote: { note in notePlayer.play(note: note) },
                         isFullScreen: isScoreFullScreen,
                         onToggleFullScreen: { isScoreFullScreen.toggle() }
@@ -226,9 +223,9 @@ struct PracticeView: View {
                                     notePlayer.stop()
                                     metronome.stop()
                                 } else {
-                                    if metronomeEnabled {
-                                        metronome.setTempo(Int(tempo))
-                                    }
+                                    // Resume: restart metronome at current tempo
+                                    metronomeEnabled = true
+                                    metronome.setTempo(Int(tempo))
                                 }
                             } label: {
                                 Label(previewPaused ? "继续" : "暂停",
@@ -242,8 +239,7 @@ struct PracticeView: View {
                             }
 
                             Button {
-                                cancelPreview()
-                                metronome.stop()
+                                finishPreview()
                             } label: {
                                 Label("结束", systemImage: "stop.circle.fill")
                                     .font(.title2)
@@ -343,27 +339,7 @@ struct PracticeView: View {
                 }
             }
             .toolbar {
-                if isPreviewing {
-                    ToolbarItem(placement: .topBarLeading) {
-                        Button(previewPaused ? "继续" : "暂停") {
-                            previewPaused.toggle()
-                            if previewPaused {
-                                notePlayer.stop()
-                                metronome.stop()
-                            } else {
-                                if metronomeEnabled {
-                                    metronome.setTempo(Int(tempo))
-                                }
-                            }
-                        }
-                    }
-                    ToolbarItem(placement: .topBarTrailing) {
-                        Button("结束") {
-                            cancelPreview()
-                            metronome.stop()
-                        }
-                    }
-                } else {
+                if !isPreviewing {
                     ToolbarItem(placement: .topBarTrailing) {
                         if currentScore != nil {
                             HStack(spacing: 8) {
@@ -562,15 +538,26 @@ struct PracticeView: View {
         currentNoteIndex = 0
         judgments = []
         lastAttemptJudgment = nil
+        isScoreFullScreen = true
 
-        let beatDuration = 60.0 / Double(score.tempo)
+        // Use user-adjusted tempo for playback speed
+        let beatDuration = 60.0 / tempo
+
+        // Auto-enable metronome synced to current tempo during preview
+        metronomeEnabled = true
+        metronome.onBeat = { beat, isDownbeat in
+            DispatchQueue.main.async {
+                currentBeat = beat
+            }
+        }
+        metronome.setTempo(Int(tempo))
 
         previewTask = Task {
             for (idx, note) in score.allNotes.enumerated() {
                 // Check for cancellation
                 if Task.isCancelled || !isPreviewing { break }
 
-                // Handle pause
+                // Handle pause (metronome stopped externally via button)
                 while previewPaused && isPreviewing {
                     try? await Task.sleep(nanoseconds: 100_000_000) // 0.1s
                     if Task.isCancelled || !isPreviewing { return }
@@ -593,21 +580,24 @@ struct PracticeView: View {
 
             // Preview finished
             await MainActor.run {
-                isPreviewing = false
-                previewPaused = false
-                notePlayer.stop()
-                currentNoteIndex = 0
+                finishPreview()
             }
         }
     }
 
-    private func cancelPreview() {
-        previewTask?.cancel()
-        previewTask = nil
+    private func finishPreview() {
         isPreviewing = false
         previewPaused = false
+        previewTask?.cancel()
+        previewTask = nil
         notePlayer.stop()
+        metronome.stop()
         currentNoteIndex = 0
+        isScoreFullScreen = false
+    }
+
+    private func cancelPreview() {
+        finishPreview()
     }
 
     // MARK: - Score Following
