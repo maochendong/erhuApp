@@ -8,6 +8,12 @@ struct ScoreLibraryView: View {
     @State private var difficultyFilter: Difficulty? = nil
     @State private var showFavoritesOnly = false
 
+    // MARK: - Preview playback
+    @State private var samplePlayer: ErhuSamplePlayer?
+    @State private var isPreviewing = false
+    @State private var previewingScoreId: UUID?
+    @State private var previewTask: Task<Void, Never>?
+
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     private var isRegularWidth: Bool { horizontalSizeClass == .regular }
 
@@ -141,6 +147,7 @@ struct ScoreLibraryView: View {
         }
         .navigationTitle("曲库")
         .searchable(text: $searchText, prompt: "搜索曲目")
+        .onDisappear { stopPreview() }
         .sheet(isPresented: $showEditor) {
             if let score = selectedScore {
                 ScoreEditorView(score: score)
@@ -214,6 +221,19 @@ struct ScoreLibraryView: View {
             Spacer()
 
             HStack(spacing: 6) {
+                Button {
+                    startPreview(for: score)
+                } label: {
+                    if previewingScoreId == score.id && isPreviewing {
+                        Image(systemName: "stop.fill")
+                    } else {
+                        Image(systemName: "speaker.wave.2")
+                    }
+                }
+                .buttonStyle(.bordered)
+                .controlSize(.small)
+                .disabled(isPreviewing && previewingScoreId != score.id)
+
                 Button("查看") {
                     selectedScore = score
                 }
@@ -305,6 +325,18 @@ struct ScoreLibraryView: View {
 
             HStack(spacing: 8) {
                 Spacer()
+                Button {
+                    startPreview(for: score)
+                } label: {
+                    Label(previewingScoreId == score.id && isPreviewing ? "停止" : "试听",
+                          systemImage: previewingScoreId == score.id && isPreviewing
+                          ? "stop.fill" : "speaker.wave.2")
+                        .labelStyle(.iconOnly)
+                }
+                .buttonStyle(.bordered)
+                .controlSize(.small)
+                .disabled(isPreviewing && previewingScoreId != score.id)
+
                 Button("查看") {
                     selectedScore = score
                 }
@@ -325,6 +357,63 @@ struct ScoreLibraryView: View {
             RoundedRectangle(cornerRadius: 12)
                 .stroke(difficultyColor(score.difficulty).opacity(0.3), lineWidth: 1)
         )
+    }
+
+    // MARK: - Preview Playback
+
+    private func startPreview(for score: Score) {
+        // Toggle off if already previewing this score
+        if previewingScoreId == score.id && isPreviewing {
+            stopPreview()
+            return
+        }
+
+        stopPreview()
+
+        // For 赛马, play the full recording
+        if samplePlayer == nil {
+            samplePlayer = ErhuSamplePlayer()
+        }
+
+        guard let player = samplePlayer else { return }
+        isPreviewing = true
+        previewingScoreId = score.id
+
+        if player.hasFullRecording(for: score.title) {
+            player.playSaimaRecording()
+            // Auto-stop after a reasonable duration
+            previewTask = Task {
+                try? await Task.sleep(nanoseconds: 30_000_000_000) // 30 seconds max
+                await MainActor.run { stopPreview() }
+            }
+            return
+        }
+
+        // Play the first several notes as a melody preview
+        let previewNotes = Array(score.allNotes.filter { !$0.isRest }.prefix(8))
+        let beatDuration = 60.0 / Double(score.tempo)
+
+        previewTask = Task {
+            for note in previewNotes {
+                if Task.isCancelled || !isPreviewing { break }
+
+                let playDuration = max(note.duration * beatDuration * 0.7, 0.2)
+                let gap = max(note.duration * beatDuration * 0.3, 0.05)
+
+                player.play(note: note, duration: playDuration)
+                try? await Task.sleep(nanoseconds: UInt64((playDuration + gap) * 1_000_000_000))
+            }
+
+            await MainActor.run { stopPreview() }
+        }
+    }
+
+    private func stopPreview() {
+        previewTask?.cancel()
+        previewTask = nil
+        samplePlayer?.stop()
+        isPreviewing = false
+        previewingScoreId = nil
     }
 
     private func difficultyColor(_ difficulty: Difficulty) -> Color {

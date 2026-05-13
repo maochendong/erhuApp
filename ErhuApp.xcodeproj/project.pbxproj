@@ -7,9 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		03DA0ABA0891FFD01BD72917 /* 二胡1_looperman.wav in Resources */ = {isa = PBXBuildFile; fileRef = 866131F417C42289123DA9A7 /* 二胡1_looperman.wav */; };
 		0BF8BD012529F0241A3FF4DF /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4C4A5D83AEB8885507651E7 /* ContentView.swift */; };
 		2CAECD5D1C246195B1766B4F /* NoteDetailEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BC745C8CB8312766392C7DC /* NoteDetailEntity.swift */; };
 		319A0AC2467BF632D1CAFA6A /* RecordingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F252D745A0A135C8B9EEBC8D /* RecordingService.swift */; };
+		3880D957E3746909B2B7E113 /* ErhuSamplePlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D7FC493DFD5DBFAC9CF5620 /* ErhuSamplePlayer.swift */; };
+		50265AEF615EC6EFEFF3FA9C /* 二胡 - 60 - 120 Bpm_looperman.wav in Resources */ = {isa = PBXBuildFile; fileRef = 57BFC33E4EBE7A7FCF289120 /* 二胡 - 60 - 120 Bpm_looperman.wav */; };
 		669DD292CDDD114E925627C9 /* Metronome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 479E35202A39A9495E2E39AF /* Metronome.swift */; };
 		6CBDA824F4465747E00605BA /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45D4299A211431877CA18AFD /* SettingsView.swift */; };
 		72A800D80362CDD67C1845E2 /* ErhuApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9816CC3A5541697C9C399860 /* ErhuApp.swift */; };
@@ -17,6 +20,7 @@
 		806492612B391BAE64EB7A64 /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6276B47EA2D075C6A53002E8 /* NotificationManager.swift */; };
 		863FC8B585F24D10CCD902EA /* PerformanceSummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFA99EEAB9BA56BE8BC9B12D /* PerformanceSummaryView.swift */; };
 		86AF87BDD67B4A51D592C5AE /* Score.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4FC65F7E0A8DFF45906303E /* Score.swift */; };
+		89C074A1CE9FA0D61551C7D6 /* 二胡独奏《赛马》_耳聆网_[声音ID：35714].mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 6DD297386DF57CBFEB5A4FB5 /* 二胡独奏《赛马》_耳聆网_[声音ID：35714].mp3 */; };
 		9D7034EE662B8AF132FE66C8 /* NotePlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81E0CD2E36BEEE1FEB8C4A55 /* NotePlayer.swift */; };
 		A1896241E9BB3C2B4520F9B0 /* PracticeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39790F319D15AA28D3DBF877 /* PracticeView.swift */; };
 		A39658C087BCCD690E45EA9C /* ScoreEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96FF9D4979396F7AAAF356AC /* ScoreEditorView.swift */; };
@@ -44,17 +48,21 @@
 		45EE43319B0F2B5F075FE30F /* JianpuParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JianpuParser.swift; sourceTree = "<group>"; };
 		479E35202A39A9495E2E39AF /* Metronome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Metronome.swift; sourceTree = "<group>"; };
 		48D92F3BA062793ACDD4F3DC /* Lesson.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Lesson.swift; sourceTree = "<group>"; };
+		57BFC33E4EBE7A7FCF289120 /* 二胡 - 60 - 120 Bpm_looperman.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = "二胡 - 60 - 120 Bpm_looperman.wav"; sourceTree = "<group>"; };
 		5A778DF74E294720D744F108 /* ScoreView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoreView.swift; sourceTree = "<group>"; };
 		5CBAD604C4880C862FBEB150 /* ScoreService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoreService.swift; sourceTree = "<group>"; };
 		6276B47EA2D075C6A53002E8 /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
 		6921955CC7AB8D33073A0426 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		6DD297386DF57CBFEB5A4FB5 /* 二胡独奏《赛马》_耳聆网_[声音ID：35714].mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "二胡独奏《赛马》_耳聆网_[声音ID：35714].mp3"; sourceTree = "<group>"; };
 		798ECBA606F5780E8412766B /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		7FEB17CC7128B07A3D629958 /* ErhuApp.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = ErhuApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		81E0CD2E36BEEE1FEB8C4A55 /* NotePlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotePlayer.swift; sourceTree = "<group>"; };
 		858369943CE752BA636425A2 /* PitchJudger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PitchJudger.swift; sourceTree = "<group>"; };
+		866131F417C42289123DA9A7 /* 二胡1_looperman.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = "二胡1_looperman.wav"; sourceTree = "<group>"; };
 		96FF9D4979396F7AAAF356AC /* ScoreEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoreEditorView.swift; sourceTree = "<group>"; };
 		9816CC3A5541697C9C399860 /* ErhuApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErhuApp.swift; sourceTree = "<group>"; };
 		9996ADC66C626076BA3EE1CA /* Note.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Note.swift; sourceTree = "<group>"; };
+		9D7FC493DFD5DBFAC9CF5620 /* ErhuSamplePlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErhuSamplePlayer.swift; sourceTree = "<group>"; };
 		A302F81489E3FF4767E7B960 /* PracticeRecordEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PracticeRecordEntity.swift; sourceTree = "<group>"; };
 		ABDBA1E6BDF6BCA22F1BA515 /* ScoreLibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoreLibraryView.swift; sourceTree = "<group>"; };
 		C4C4A5D83AEB8885507651E7 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -96,11 +104,22 @@
 				6921955CC7AB8D33073A0426 /* Info.plist */,
 				9F00F20D2638A9226881CC0B /* Audio */,
 				3279486059AF38AF728E01D7 /* Models */,
+				55E35C8E1B2A51438E54E46E /* Resources */,
 				D6B04A60C5F5B3928E640170 /* Services */,
 				738FF03E6256D3AE906FD659 /* Views */,
 			);
 			name = ErhuApp;
 			path = Sources/ErhuApp;
+			sourceTree = "<group>";
+		};
+		55E35C8E1B2A51438E54E46E /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				57BFC33E4EBE7A7FCF289120 /* 二胡 - 60 - 120 Bpm_looperman.wav */,
+				866131F417C42289123DA9A7 /* 二胡1_looperman.wav */,
+				6DD297386DF57CBFEB5A4FB5 /* 二胡独奏《赛马》_耳聆网_[声音ID：35714].mp3 */,
+			);
+			path = Resources;
 			sourceTree = "<group>";
 		};
 		738FF03E6256D3AE906FD659 /* Views */ = {
@@ -134,6 +153,7 @@
 			isa = PBXGroup;
 			children = (
 				E5D023B499C112DFA02520D4 /* AudioEngine.swift */,
+				9D7FC493DFD5DBFAC9CF5620 /* ErhuSamplePlayer.swift */,
 				479E35202A39A9495E2E39AF /* Metronome.swift */,
 				81E0CD2E36BEEE1FEB8C4A55 /* NotePlayer.swift */,
 			);
@@ -153,13 +173,6 @@
 			path = Services;
 			sourceTree = "<group>";
 		};
-		"TEMP_45612E6C-6A0C-4B83-A6FD-ED60F337D86B" /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Resources;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -168,6 +181,7 @@
 			buildConfigurationList = BAE6B00B8E0AF3EB0A26E0ED /* Build configuration list for PBXNativeTarget "ErhuApp" */;
 			buildPhases = (
 				FA578BC17D0E980B685F7F8D /* Sources */,
+				77EE2847CDEE07CA7E835825 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -206,6 +220,19 @@
 		};
 /* End PBXProject section */
 
+/* Begin PBXResourcesBuildPhase section */
+		77EE2847CDEE07CA7E835825 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				50265AEF615EC6EFEFF3FA9C /* 二胡 - 60 - 120 Bpm_looperman.wav in Resources */,
+				03DA0ABA0891FFD01BD72917 /* 二胡1_looperman.wav in Resources */,
+				89C074A1CE9FA0D61551C7D6 /* 二胡独奏《赛马》_耳聆网_[声音ID：35714].mp3 in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		FA578BC17D0E980B685F7F8D /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -214,6 +241,7 @@
 				E52540440621FC6D1FE93D4F /* AudioEngine.swift in Sources */,
 				0BF8BD012529F0241A3FF4DF /* ContentView.swift in Sources */,
 				72A800D80362CDD67C1845E2 /* ErhuApp.swift in Sources */,
+				3880D957E3746909B2B7E113 /* ErhuSamplePlayer.swift in Sources */,
 				D0338273039078CC72816060 /* JianpuParser.swift in Sources */,
 				E3C49EEBCE5F25C78F5E7FC3 /* JianpuView.swift in Sources */,
 				F6611F9F57C8BA161B210A50 /* Lesson.swift in Sources */,

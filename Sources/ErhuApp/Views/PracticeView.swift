@@ -64,6 +64,7 @@ struct PracticeView: View {
 
     // MARK: - Preview playback
     @State private var notePlayer = NotePlayer()
+    @State private var samplePlayer: ErhuSamplePlayer?
     @State private var isPreviewing = false
     @State private var previewPaused = false
     @State private var previewTask: Task<Void, Never>?
@@ -221,6 +222,7 @@ struct PracticeView: View {
                                 previewPaused.toggle()
                                 if previewPaused {
                                     notePlayer.stop()
+                                    samplePlayer?.stop()
                                     metronome.stop()
                                 } else {
                                     // Resume: restart metronome at current tempo
@@ -540,6 +542,10 @@ struct PracticeView: View {
         lastAttemptJudgment = nil
         isScoreFullScreen = true
 
+        // Try to use the sample player first
+        let lazyPlayer = samplePlayer ?? ErhuSamplePlayer()
+        samplePlayer = lazyPlayer
+
         // Use user-adjusted tempo for playback speed
         let beatDuration = 60.0 / tempo
 
@@ -567,13 +573,20 @@ struct PracticeView: View {
                     currentNoteIndex = idx
                 }
 
+                // Read tempo dynamically so slider changes take effect immediately
+                let currentBeatDuration = 60.0 / tempo
+
                 if note.isRest {
-                    let restDuration = max(note.duration * beatDuration, 0.3)
+                    let restDuration = max(note.duration * currentBeatDuration, 0.3)
                     try? await Task.sleep(nanoseconds: UInt64(restDuration * 1_000_000_000))
                 } else {
-                    let playDuration = max(note.duration * beatDuration * 0.7, 0.2)
-                    let gap = max(note.duration * beatDuration * 0.3, 0.05)
-                    notePlayer.play(note: note, duration: playDuration)
+                    let playDuration = max(note.duration * currentBeatDuration * 0.7, 0.2)
+                    let gap = max(note.duration * currentBeatDuration * 0.3, 0.05)
+                    if let sp = samplePlayer {
+                        sp.play(note: note, duration: playDuration)
+                    } else {
+                        notePlayer.play(note: note, duration: playDuration)
+                    }
                     try? await Task.sleep(nanoseconds: UInt64((playDuration + gap) * 1_000_000_000))
                 }
             }
@@ -591,7 +604,7 @@ struct PracticeView: View {
         previewTask?.cancel()
         previewTask = nil
         notePlayer.stop()
-        metronome.stop()
+        samplePlayer?.stop()
         currentNoteIndex = 0
         isScoreFullScreen = false
     }
