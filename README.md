@@ -1,4 +1,4 @@
-# 盼盼学二胡 · Erhu Trainer
+#  Erhu Trainer
 
 [![Swift](https://img.shields.io/badge/Swift-6.0-F05138?logo=swift)](https://swift.org)
 [![Platform](https://img.shields.io/badge/iOS-18.0+-000000?logo=apple)](https://developer.apple.com/ios)
