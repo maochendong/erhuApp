@@ -657,7 +657,8 @@ struct PracticeView: View {
                 playedOctave: 0,
                 isCorrect: true,
                 centsOff: 0,
-                timestamp: ts
+                timestamp: ts,
+                absoluteCentError: 0
             )
             judgments.append(restJudgment)
             advanceWithLoop(score: score)
@@ -712,7 +713,8 @@ struct PracticeView: View {
                     playedOctave: judgment.playedOctave,
                     isCorrect: judgment.isCorrect,
                     centsOff: judgment.centsOff,
-                    timestamp: ts
+                    timestamp: ts,
+                    absoluteCentError: judgment.absoluteCentError
                 )
                 judgments.append(judgmentWithTimestamp)
                 advanceWithLoop(score: score)

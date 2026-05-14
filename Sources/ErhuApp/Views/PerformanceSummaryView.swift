@@ -195,9 +195,9 @@ struct StatBadge: View {
         result: PitchJudger.PerformanceResult(
             score: ScoreService.shared.scores[0],
             judgments: [
-                PitchJudger.Judgment(note: Note(degree: 1), playedDegree: 1, playedOctave: 0, isCorrect: true, centsOff: 10, timestamp: 0),
-                PitchJudger.Judgment(note: Note(degree: 2), playedDegree: 2, playedOctave: 0, isCorrect: true, centsOff: 5, timestamp: 1),
-                PitchJudger.Judgment(note: Note(degree: 3), playedDegree: 3, playedOctave: 0, isCorrect: false, centsOff: 80, timestamp: 2),
+                PitchJudger.Judgment(note: Note(degree: 1), playedDegree: 1, playedOctave: 0, isCorrect: true, centsOff: 10, timestamp: 0, absoluteCentError: 10),
+                PitchJudger.Judgment(note: Note(degree: 2), playedDegree: 2, playedOctave: 0, isCorrect: true, centsOff: 5, timestamp: 1, absoluteCentError: 5),
+                PitchJudger.Judgment(note: Note(degree: 3), playedDegree: 3, playedOctave: 0, isCorrect: false, centsOff: 80, timestamp: 2, absoluteCentError: 80),
             ]
         ),
         onRetry: {},

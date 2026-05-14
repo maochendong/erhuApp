@@ -11,22 +11,24 @@ final class AudioEngine {
     var currentNote: Int = 0
     var currentOctave: Int = 0
     var amplitude: Float = 0
+    /// Cent deviation from the nearest standard note (negative = flat, positive = sharp)
+    var currentCentsOffset: Double = 0
 
     /// YIN threshold parameter (default 0.15, lower = more sensitive)
-    var yinThreshold: Double = 0.15
-    /// Minimum detected frequency (C3 ≈ 130.81 Hz)
-    let minFrequency: Double = 65.0
-    /// Maximum detected frequency (C7 ≈ 2093 Hz)
-    let maxFrequency: Double = 2093.0
+    var yinThreshold: Double = 0.12
+    /// Minimum detected frequency (C3 ≈ 130.81 Hz, but erhu low string ≈ D4)
+    let minFrequency: Double = 130.0
+    /// Maximum detected frequency (erhu high range up to ~A6)
+    let maxFrequency: Double = 2000.0
 
     private let sampleRate: Double = 44100
-    /// Buffer size for analysis (≈23ms at 44.1kHz, allows detection down to ~65Hz)
+    /// Buffer size for analysis (~46ms at 44.1kHz)
     private let bufferSize = 2048
 
-    /// Portamento smoothing: require pitch stability for 80ms before registering
+    /// Portamento smoothing: require pitch stability before registering
     private var pitchHistory: [Double] = []
-    private let pitchHistoryMaxSize = 4  // ~80ms at ~50Hz buffer rate (23ms * 4 ≈ 92ms)
-    private let stabilityCentsThreshold: Double = 50.0
+    private let pitchHistoryMaxSize = 4
+    private let stabilityCentsThreshold: Double = 40.0
 
     func start() {
         // Configure audio session
@@ -73,6 +75,7 @@ final class AudioEngine {
         isListening = false
         currentFrequency = 0
         currentNote = 0
+        currentCentsOffset = 0
         pitchHistory.removeAll()
     }
 
@@ -81,12 +84,16 @@ final class AudioEngine {
         let frameLength = Int(buffer.frameLength)
         let samples = Array(UnsafeBufferPointer(start: channelData[0], count: frameLength))
 
-        let rms = sqrt(samples.map { $0 * $0 }.reduce(0, +) / Float(frameLength))
+        // RMS amplitude
+        var rms: Float = 0
+        vDSP_rmsqv(samples, 1, &rms, vDSP_Length(frameLength))
         amplitude = rms
 
-        guard rms > 0.01 else {
+        // Noise gate: require minimum amplitude
+        guard rms > 0.012 else {
             currentFrequency = 0
             currentNote = 0
+            currentCentsOffset = 0
             pitchHistory.removeAll()
             return
         }
@@ -94,17 +101,18 @@ final class AudioEngine {
         if let rawFreq = detectPitchYIN(samples) {
             if let freq = smoothAndValidatePitch(rawFreq), freq > 0 {
                 currentFrequency = freq
-                let (note, octave) = frequencyToNote(freq)
+                let (note, octave, centsOff) = frequencyToNote(freq)
                 currentNote = note
                 currentOctave = octave
+                currentCentsOffset = centsOff
             }
         }
     }
 
     // MARK: - YIN Algorithm
 
-    /// YIN pitch detection (de Cheveigné & Kawahara, 2002)
-    /// Returns fundamental frequency in Hz, or nil if no clear pitch detected
+    /// YIN pitch detection with octave error correction for erhu.
+    /// Returns fundamental frequency in Hz, or nil if no clear pitch detected.
     private func detectPitchYIN(_ samples: [Float]) -> Double? {
         let count = samples.count
         let maxLag = min(count, Int(sampleRate / minFrequency))
@@ -115,13 +123,11 @@ final class AudioEngine {
         // Step 1: Difference function d(tau)
         var diff = [Double](repeating: 0, count: maxLag)
 
-        // Use Accelerate for performance
         var squaredSum: Float = 0
         vDSP_svesq(samples, 1, &squaredSum, vDSP_Length(count))
         diff[0] = Double(squaredSum) * 2.0
 
         for tau in 1..<maxLag {
-            // d(tau) = sum_{j=0}^{N-1-tau} (x[j] - x[j+tau])^2
             var sum: Float = 0
             let len = count - tau
             vDSP_distancesq(samples, 1, Array(samples[tau..<count]), 1, &sum, vDSP_Length(len))
@@ -137,32 +143,70 @@ final class AudioEngine {
             cmnd[tau] = diff[tau] * Double(tau) / runningSum
         }
 
-        // Step 3: Absolute threshold search
-        // Find first tau where CMND drops below threshold
-        var bestTau: Int? = nil
+        // Step 3: Absolute threshold search — find all candidate dips, not just the first
+        var candidates: [(tau: Int, value: Double)] = []
+        var inDip = false
         for tau in minLag..<maxLag {
-            if cmnd[tau] < yinThreshold {
-                bestTau = tau
-                break
+            if cmnd[tau] < yinThreshold && !inDip {
+                inDip = true
+                candidates.append((tau, cmnd[tau]))
+            } else if cmnd[tau] >= yinThreshold {
+                inDip = false
             }
         }
 
-        // If no point below threshold, find global minimum in range
-        if bestTau == nil {
+        // If no point below threshold, find global minimum
+        if candidates.isEmpty {
             var minVal = Double.infinity
+            var bestTau = minLag
             for tau in minLag..<maxLag {
                 if cmnd[tau] < minVal {
                     minVal = cmnd[tau]
                     bestTau = tau
                 }
             }
+            candidates.append((bestTau, minVal))
         }
 
-        guard let tau = bestTau, tau > 0 else { return nil }
+        // Step 4: Choose the best candidate with octave correction.
+        // The first YIN dip is often the correct fundamental, but strong
+        // erhu harmonics can pull it to a sub-octave. We compare candidates
+        // and prefer the one that gives a frequency in a plausible range
+        // for the expected instrument range.
+        var bestCandidate = candidates[0]
+        var bestScore = Double.infinity
 
-        // Step 4: Parabolic interpolation for sub-sample accuracy
-        let interpolatedTau = parabolicInterpolation(cmnd: cmnd, tau: tau)
+        for candidate in candidates {
+            guard candidate.tau > 0 else { continue }
 
+            // Interpolate for sub-sample accuracy
+            let interpolatedTau = parabolicInterpolation(cmnd: cmnd, tau: candidate.tau)
+            let freq = sampleRate / interpolatedTau
+            guard freq >= minFrequency && freq <= maxFrequency else { continue }
+
+            // Score: prefer lower CMND value and penalize candidates that
+            // appear to be octave errors (freq × 2 has a dip too)
+            let score = candidate.value
+
+            // Check if double frequency also has a dip (good sign it's the fundamental)
+            let halfTau = candidate.tau / 2
+            var octaveConfidence: Double = 1.0
+            if halfTau >= minLag {
+                octaveConfidence = cmnd[halfTau] / cmnd[candidate.tau]
+            }
+
+            // Prefer candidates where the octave also dips (strong fundamental)
+            let adjustedScore = score * (0.5 + 0.5 / max(octaveConfidence, 0.1))
+
+            if adjustedScore < bestScore {
+                bestScore = adjustedScore
+                bestCandidate = candidate
+            }
+        }
+
+        guard bestCandidate.tau > 0 else { return nil }
+
+        let interpolatedTau = parabolicInterpolation(cmnd: cmnd, tau: bestCandidate.tau)
         let frequency = sampleRate / interpolatedTau
         guard frequency >= minFrequency && frequency <= maxFrequency else { return nil }
 
@@ -187,7 +231,7 @@ final class AudioEngine {
     // MARK: - Portamento Handling
 
     /// Smooth pitch detection to avoid false triggers during erhu portamento (滑音)
-    /// Only registers a pitch when it has been stable within 50 cents for >80ms
+    /// Only registers a pitch when it has been stable within 40 cents for >80ms
     private func smoothAndValidatePitch(_ freq: Double) -> Double? {
         pitchHistory.append(freq)
         if pitchHistory.count > pitchHistoryMaxSize {
@@ -196,7 +240,7 @@ final class AudioEngine {
 
         guard pitchHistory.count >= 3 else { return nil }
 
-        // Check if all recent pitches are within ±50 cents of each other
+        // Check stability
         let meanFreq = pitchHistory.reduce(0, +) / Double(pitchHistory.count)
         let allStable = pitchHistory.allSatisfy { pitch in
             let cents = 1200 * log2(pitch / meanFreq)
@@ -208,12 +252,16 @@ final class AudioEngine {
 
     // MARK: - Frequency to Note
 
-    /// Convert frequency to jianpu note degree and octave
-    private func frequencyToNote(_ freq: Double) -> (degree: Int, octave: Int) {
-        guard freq > 0 else { return (0, 0) }
+    /// Convert frequency to jianpu note degree, octave, and cent offset.
+    private func frequencyToNote(_ freq: Double) -> (degree: Int, octave: Int, centsOff: Double) {
+        guard freq > 0 else { return (0, 0, 0) }
 
         let midi = 12 * log2(freq / 440.0) + 69
         let roundedMidi = Int(round(midi))
+
+        // Cent offset from the nearest equal-temperament note
+        let nearestFreq = 440.0 * pow(2.0, (Double(roundedMidi) - 69.0) / 12.0)
+        let centsOff = 1200 * log2(freq / nearestFreq)
 
         let noteInOctave = ((roundedMidi - 12) % 12 + 12) % 12
         let octave = (roundedMidi - 12) / 12 - 1
@@ -230,6 +278,6 @@ final class AudioEngine {
         default: degree = 0
         }
 
-        return (degree, octave)
+        return (degree, octave, centsOff)
     }
 }
