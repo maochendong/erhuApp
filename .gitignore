@@ -1,6 +1,10 @@
 .build/
+build/
 *.xcuserdata
 *.xcworkspace
 DerivedData/
 .DS_Store
 *.log
+.claude/
+CDImage.wav
+_looperman.wav
